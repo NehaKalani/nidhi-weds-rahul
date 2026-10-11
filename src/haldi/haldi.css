@@ -46,10 +46,19 @@
   height: auto;
 }
 
+.haldi__detail-date,
 .haldi__detail-line,
 .haldi__detail-theme,
 .haldi__detail-colors {
   filter: brightness(1.34) saturate(0.86) contrast(0.92);
+}
+
+.haldi__detail-date {
+  width: auto;
+  max-width: 70%;
+  height: 1.45rem;
+  object-fit: contain;
+  margin-bottom: 0.55rem;
 }
 
 .haldi__detail-line {

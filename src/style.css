@@ -19,7 +19,7 @@
   --ivory-deep: #f1e9da;
   --leaf: #4b6a2c;
   --leaf-soft: rgba(75, 106, 44, 0.45);
-  --hero-width: min(94vw, 1180px, calc((100svh - 9rem) * 1.55));
+  --hero-width: min(90vw, 820px, max(18rem, calc((100svh - 30rem) * 1.35)));
 }
 
 *,
@@ -71,12 +71,100 @@ body::before {
   position: relative;
   z-index: 20;
   height: 100svh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  padding: 3rem 0;
+  justify-items: center;
+  padding:
+    max(0.7rem, env(safe-area-inset-top))
+    0
+    max(0.5rem, env(safe-area-inset-bottom));
   overflow: hidden;
+}
+
+.hero__intro {
+  grid-row: 1;
+  align-self: end;
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 40rem);
+  margin: 0 0 1.65rem;
+  text-align: center;
+  color: #2c261f;
+  opacity: 0;
+  transform: translateY(0.55rem);
+  transition:
+    opacity 1.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 1.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.hero__intro p {
+  margin: 0;
+}
+
+.hero__intro-kicker {
+  font-family: Cinzel, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: clamp(0.68rem, 1.35vw, 0.88rem);
+  letter-spacing: 0.28em;
+  line-height: 1.35;
+  padding-left: 0.28em;
+  color: #4b6a2c;
+}
+
+.hero__intro-names {
+  margin-top: 0.48rem;
+}
+
+.hero__intro-names span {
+  display: block;
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.08rem, 2.2vw, 1.4rem);
+  line-height: 1.26;
+  font-synthesis: none;
+}
+
+.hero__intro-family {
+  margin-top: 0.38rem;
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.04rem, 2.05vw, 1.32rem);
+  line-height: 1.25;
+  color: #4a4338;
+  font-synthesis: none;
+}
+
+.hero__intro-invite {
+  margin-top: 0.9rem;
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+  line-height: 1.2;
+  color: #3d342c;
+  font-synthesis: none;
+}
+
+.is-static .hero__intro,
+.hero.is-introduced .hero__intro {
+  opacity: 1;
+  transform: none;
+}
+
+.hero.is-parting.is-introduced .hero__intro {
+  transition: none;
+  opacity: var(--intro);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__intro {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .hero__veil {
@@ -88,6 +176,8 @@ body::before {
 }
 
 .hero__cue {
+  grid-row: 3;
+  align-self: start;
   position: relative;
   z-index: 3;
   display: flex;
@@ -206,6 +296,7 @@ body::before {
 }
 
 .hero__title {
+  grid-row: 2;
   position: relative;
   z-index: 1;
   margin: 0;

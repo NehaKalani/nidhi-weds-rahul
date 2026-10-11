@@ -95,6 +95,7 @@ async function init() {
 
   if (animated.length === 0) {
     document.documentElement.classList.add("is-static");
+    document.querySelector(".hero__intro")?.removeAttribute("aria-hidden");
     return;
   }
 
@@ -143,6 +144,7 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
 
   const stage = hero.querySelector(".hero__stage");
   const veil = hero.querySelector(".hero__veil");
+  const intro = hero.querySelector(".hero__intro");
   const nidhi = hero.querySelector('[data-row="nidhi"]');
   const rahul = hero.querySelector('[data-row="rahul"]');
   const weds = hero.querySelector(".weds");
@@ -186,7 +188,8 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     window.setTimeout(() => {
       heroHeld = false;
       hero.classList.remove("is-holding");
-      hero.classList.add("is-scroll-ready");
+      hero.classList.add("is-scroll-ready", "is-introduced");
+      hero.querySelector(".hero__intro")?.removeAttribute("aria-hidden");
       document.documentElement.classList.remove("is-hero-held");
     }, 2600);
   };
@@ -226,6 +229,8 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
       rahul.style.transform = "";
       nidhi.style.opacity = "";
       rahul.style.opacity = "";
+      hero.classList.remove("is-parting");
+      hero.style.removeProperty("--intro");
       return;
     }
 
@@ -233,6 +238,7 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     const foil = revealed ? 0 : easeInOut(clamp01((progress - 0.48) / 0.36));
     const scene = revealed ? easeInOut(move) : 1;
     const wedsOpacity = 1 - easeInOut(clamp01((progress - 0.08) / 0.18));
+    const introOpacity = intro ? 1 - easeInOut(clamp01(progress / 0.14)) : 1;
     const scale = 1 + move * scaleGain;
     const nidhiApart = move * (nidhiExit || window.innerHeight * 0.72);
     const rahulApart = move * (rahulExit || window.innerHeight * 0.72);
@@ -241,6 +247,10 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     venue.style.setProperty("--foil", foil.toFixed(3));
     venue.style.setProperty("--scene", scene.toFixed(3));
     weds.style.opacity = String(wedsOpacity);
+    if (intro) {
+      hero.classList.add("is-parting");
+      hero.style.setProperty("--intro", introOpacity.toFixed(3));
+    }
     nidhi.style.opacity = "";
     rahul.style.opacity = "";
     nidhi.style.transform = `translate3d(0, ${-nidhiApart}px, 0) scale(${scale})`;

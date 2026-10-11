@@ -28,7 +28,7 @@ export function initMaayra(section, sangeet) {
     const raw = top >= 0 ? 0 : clamp01(-top / rollSpan);
     const pinned = section.getBoundingClientRect().top <= 2;
     const roll = pinned ? 1 : easeInOut(raw);
-    const title = pinned ? 1 : easeInOut(clamp01((raw - 0.62) / 0.32));
+    const title = pinned || raw >= 0.14 ? 1 : 0;
     const down = roll >= 0.985;
     const covering = (raw > 0.004 || down) && !pinned;
 

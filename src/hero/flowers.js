@@ -89,6 +89,7 @@ export function createFlowers(container, manifest, basePath) {
         }
 
         const large = flower.area >= BUD_MIN_AREA;
+        const bloomDuration = large ? 1600 : 700;
         img.animate(
           large
             ? [
@@ -102,7 +103,7 @@ export function createFlowers(container, manifest, basePath) {
                 { opacity: 1, transform: "scale(1.12)", offset: 0.6 },
                 { opacity: 1, transform: "scale(1)" },
               ],
-          { duration: large ? 1600 : 700, delay: bloomStart, easing: BLOOM_EASE, fill: "forwards" },
+          { duration: bloomDuration, delay: bloomStart, easing: BLOOM_EASE, fill: "forwards" },
         );
 
         const rest = large ? 6.2 : 10;
@@ -118,7 +119,7 @@ export function createFlowers(container, manifest, basePath) {
           ],
           {
             duration: 4200 + seeded(index + 3) * 2400,
-            delay: bloomStart + (large ? 1600 : 700) + along * 380,
+            delay: bloomStart + bloomDuration + along * 380,
             iterations: Infinity,
             easing: "ease-in-out",
           },
