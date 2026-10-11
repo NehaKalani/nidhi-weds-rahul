@@ -80,102 +80,70 @@
 }
 
 .maayra__crop--tl {
-  top: -1%;
-  left: -6%;
+  top: -2%;
+  left: -8%;
   z-index: 3;
-  width: 56vw;
+  width: 54vw;
+  clip-path: inset(0 32% 6% 0);
 }
 
 .maayra__crop--tr {
-  top: -2%;
-  right: -5%;
+  top: -3%;
+  right: -6%;
+  z-index: 3;
+  width: 48vw;
+}
+
+.maayra__crop--bl {
+  top: auto;
+  bottom: -3%;
+  left: -10%;
   z-index: 3;
   width: 50vw;
+  transform: scaleY(-1);
+  clip-path: inset(0 32% 6% 0);
 }
 
-.maayra__crop--l {
+.maayra__crop--br {
   top: auto;
-  bottom: -2%;
-  left: -8%;
-  z-index: 2;
-  width: 44vw;
+  bottom: -1%;
+  right: -4%;
+  z-index: 3;
+  width: 52vw;
+  transform: scaleY(-1);
 }
 
-.maayra__crop--r {
-  top: auto;
-  bottom: -2%;
-  right: -7%;
-  z-index: 2;
-  width: 46vw;
-}
-
-.maayra__roll {
-  --roll-thick: calc(5rem + (1 - var(--roll)) * 2.8rem);
+.maayra__hem {
   display: none;
   position: absolute;
-  left: -16%;
-  right: -16%;
+  left: -6%;
+  right: -6%;
   top: 100%;
   z-index: 6;
-  height: var(--roll-thick);
-  transform: translateY(-22%);
-  pointer-events: none;
-}
-
-.maayra.is-rolling .maayra__roll {
-  display: block;
-}
-
-.maayra.is-draped .maayra__roll {
-  display: none;
-}
-
-.maayra__roll-shade {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 58%;
-  height: 160%;
+  height: 36px;
+  transform: translateY(-45%);
   border-radius: 50%;
-  background: radial-gradient(50% 60% at 50% 0%, rgba(32, 4, 10, 0.58) 0%, transparent 74%);
-  filter: blur(8px);
-}
-
-.maayra__roll-tube {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: calc(var(--roll-thick) / 2);
   background:
     linear-gradient(
       180deg,
-      rgba(255, 240, 210, 0.7) 0%,
-      rgba(255, 220, 170, 0.2) 14%,
-      rgba(255, 255, 255, 0.06) 24%,
-      rgba(40, 8, 14, 0.28) 46%,
-      rgba(255, 200, 150, 0.08) 64%,
-      rgba(40, 8, 14, 0.4) 82%,
-      rgba(16, 2, 6, 0.62) 100%
-    ),
-    url("/maayra/frame/fabric_crop_left.svg") 40% 30% / 85% auto;
+      rgba(255, 228, 176, 0.55) 0%,
+      #e8a15a 18%,
+      #b43c3a 42%,
+      #7a1a28 68%,
+      #c45a4a 100%
+    );
   box-shadow:
-    0 20px 28px rgba(32, 4, 10, 0.48),
-    0 6px 0 rgba(70, 10, 18, 0.28),
-    inset 0 14px 12px rgba(255, 236, 198, 0.38),
-    inset 0 -16px 18px rgba(16, 2, 6, 0.5);
+    0 14px 28px rgba(60, 8, 18, 0.42),
+    inset 0 3px 5px rgba(255, 236, 196, 0.4),
+    inset 0 -4px 6px rgba(70, 8, 16, 0.35);
 }
 
-.maayra__roll-crease {
-  position: absolute;
-  left: 2%;
-  right: 2%;
-  top: -14%;
-  z-index: 3;
-  height: 36%;
-  border-radius: 50%;
-  background:
-    linear-gradient(180deg, rgba(16, 2, 6, 0.45) 0%, rgba(16, 2, 6, 0.1) 60%, transparent 100%);
-  pointer-events: none;
+.maayra.is-rolling .maayra__hem {
+  display: block;
+}
+
+.maayra.is-draped .maayra__hem {
+  display: none;
 }
 
 .maayra__copy {
@@ -188,24 +156,9 @@
   pointer-events: none;
 }
 
-.maayra__roll-flap {
-  position: absolute;
-  left: 3%;
-  right: 3%;
-  top: 48%;
-  z-index: 1;
-  height: 70%;
-  border-radius: 0 0 42% 42% / 0 0 90% 90%;
-  background:
-    linear-gradient(180deg, rgba(20, 4, 8, 0.35) 0%, rgba(20, 4, 8, 0.08) 40%, transparent 70%),
-    url("/maayra/frame/fabric_crop_left.svg") 45% 55% / 90% auto;
-  box-shadow: 0 16px 20px rgba(16, 2, 6, 0.4);
-  filter: brightness(0.72) saturate(1.08);
-}
-
 .maayra__panel-ink {
   position: absolute;
-  top: 16svh;
+  top: 21svh;
   right: 20vw;
   bottom: 22svh;
   left: 20vw;
@@ -216,40 +169,44 @@
   color: #6b1c22;
 }
 
-.maayra__date {
-  margin: 0;
-  opacity: var(--title);
-  font-family: Cinzel, "Times New Roman", serif;
-  font-weight: 700;
-  font-size: clamp(0.84rem, 3vw, 1.02rem);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
 .maayra__title {
-  margin: 0.1em 0 0;
+  margin: 0;
   max-width: 100%;
   opacity: var(--title);
-  font-family: Cinzel, "Times New Roman", serif;
+  font-family: "Pinyon Script", "Snell Roundhand", cursive;
   font-style: normal;
-  font-weight: 900;
-  font-size: clamp(3rem, 14vw, 4.6rem);
-  letter-spacing: 0.06em;
-  line-height: 0.92;
+  font-weight: 400;
+  font-size: clamp(4.2rem, 20vw, 6.2rem);
+  letter-spacing: 0.02em;
+  line-height: 0.9;
   font-synthesis: none;
+}
+
+.maayra__mid {
+  margin: auto 0;
+  text-align: center;
+}
+
+.maayra__date {
+  margin: 0;
+  font-family: Cinzel, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 4.6vw, 1.45rem);
+  letter-spacing: 0.1em;
+  text-transform: none;
 }
 
 .maayra__details {
   margin-top: 0.55em;
-  font-size: clamp(1rem, 4vw, 1.24rem);
+  font-size: clamp(1.2rem, 4.8vw, 1.5rem);
   color: #6b1c22;
 }
 
 .maayra__hosts {
-  margin: 2.4rem 0 0;
+  margin: 0;
   padding-top: 0;
   font-family: Cinzel, "Times New Roman", serif;
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(0.72rem, 2.8vw, 0.9rem);
   letter-spacing: 0.055em;
   line-height: 1.4;
@@ -261,6 +218,7 @@
 
 .maayra__hosts-label {
   margin-bottom: 0.45em;
+  font-weight: 700;
   font-size: 1.08em;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -278,7 +236,7 @@
     height: 100%;
   }
 
-  .maayra__roll {
+  .maayra__hem {
     display: none;
   }
 }
