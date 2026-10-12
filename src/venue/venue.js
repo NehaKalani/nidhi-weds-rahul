@@ -409,6 +409,9 @@ export async function initVenue(section) {
     if (ritualFrame) return;
     ritualFrame = requestAnimationFrame(() => {
       ritualFrame = 0;
+      // The hero shortens once Ganesha leaves, which moves this section up.
+      // Measuring only at load left the ritual a screen behind the finger.
+      measureRitual();
       setProgress(ritualProgress());
     });
   };
@@ -462,6 +465,7 @@ export async function initVenue(section) {
   let pinOn = false;
   const syncPin = () => {
     const need = (scratchReady && !revealed) || (revealed && !mayLeave);
+    section.classList.toggle("is-scroll-locked", need);
     if (need === pinOn) return;
     pinOn = need;
     if (need) {
@@ -478,6 +482,134 @@ export async function initVenue(section) {
   window.addEventListener("touchstart", (event) => {
     lastTouchY = event.touches?.[0]?.clientY ?? 0;
   }, { passive: true });
+
+  // iPhone leaves a touch on the fixed gold card (and, once the card is
+  // scratchable, on a surface with touch-action: none) so the page never
+  // moves. Own that gesture and scroll by the finger, the way a wheel does.
+  const iosTouch = /iPhone|iPad|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (iosTouch) {
+    section.style.touchAction = "none";
+    stage.style.touchAction = "none";
+    art.style.touchAction = "none";
+  }
+
+  let gesture = null;
+  let flingFrame = 0;
+  const cancelFling = () => {
+    if (!flingFrame) return;
+    cancelAnimationFrame(flingFrame);
+    flingFrame = 0;
+  };
+
+  const onTouchStart = (event) => {
+    cancelFling();
+    if (event.touches.length !== 1) {
+      gesture = null;
+      return;
+    }
+    const touch = event.touches[0];
+    lastTouchY = touch.clientY;
+    if (!(event.target instanceof Node) || !section.contains(event.target)) {
+      gesture = null;
+      return;
+    }
+    gesture = {
+      id: touch.identifier,
+      startY: touch.clientY,
+      y: touch.clientY,
+      scroll: window.scrollY,
+      owned: iosTouch,
+      seen: false,
+      t: performance.now(),
+      v: 0,
+    };
+  };
+
+  const onTouchMove = (event) => {
+    if (!gesture) return;
+    const touch = [...event.touches].find((entry) => entry.identifier === gesture.id);
+    if (!touch) return;
+
+    const now = performance.now();
+    const step = gesture.y - touch.clientY;
+    const dt = Math.max(now - gesture.t, 1);
+    gesture.y = touch.clientY;
+    gesture.t = now;
+    if (dt < 100) gesture.v = gesture.v * 0.5 + (step / dt) * 0.5;
+    const dy = gesture.startY - touch.clientY;
+    const scratching = scratchReady && !revealed && event.target === scratch;
+
+    if (scratching) return;
+
+    if (revealed && !mayLeave) {
+      if (event.cancelable) event.preventDefault();
+      return;
+    }
+
+    if (scratchReady && !revealed) {
+      if (event.cancelable) event.preventDefault();
+      if (step > 1) shakeScratch();
+      else if (step < -1) window.scrollBy(0, step);
+      return;
+    }
+
+    if (!gesture.owned) {
+      if (!gesture.seen) {
+        gesture.seen = true;
+        return;
+      }
+      if (Math.abs(window.scrollY - gesture.scroll) > 6) {
+        gesture = null;
+        return;
+      }
+      if (Math.abs(dy) < 24) return;
+      gesture.owned = true;
+    }
+
+    if (event.cancelable) event.preventDefault();
+    // The hero snaps onto the venue as you arrive. Keep that jump, then
+    // continue from it instead of pulling the page back to the finger's start.
+    if (dy > 0 && window.scrollY > gesture.scroll + dy + 2) {
+      gesture.scroll = window.scrollY - dy;
+    }
+    window.scrollTo(0, gesture.scroll + dy);
+  };
+
+  const onTouchEnd = (event) => {
+    if (!gesture) return;
+    const ended = [...event.changedTouches].some((entry) => entry.identifier === gesture.id);
+    if (!ended) return;
+    const speed = gesture.v;
+    const owned = gesture.owned;
+    gesture = null;
+    if (!owned || event.type === "touchcancel") return;
+    if (Math.abs(speed) < 0.05) return;
+    if ((scratchReady && !revealed) || (revealed && !mayLeave)) return;
+
+    let velocity = Math.max(-64, Math.min(64, speed * 16));
+    const step = () => {
+      velocity *= 0.94;
+      if (Math.abs(velocity) < 0.45) {
+        flingFrame = 0;
+        return;
+      }
+      if ((scratchReady && !revealed && velocity > 0) || (revealed && !mayLeave)) {
+        flingFrame = 0;
+        return;
+      }
+      window.scrollBy(0, velocity);
+      flingFrame = requestAnimationFrame(step);
+    };
+    flingFrame = requestAnimationFrame(step);
+  };
+
+  const listenOn = iosTouch ? window : section;
+  const capture = iosTouch;
+  listenOn.addEventListener("touchstart", onTouchStart, { passive: true, capture });
+  listenOn.addEventListener("touchmove", onTouchMove, { passive: false, capture });
+  listenOn.addEventListener("touchend", onTouchEnd, { passive: true, capture });
+  listenOn.addEventListener("touchcancel", onTouchEnd, { passive: true, capture });
 
   return {
     setProgress,

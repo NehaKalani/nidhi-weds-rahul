@@ -253,17 +253,23 @@
 
 .venue__scratch {
   z-index: 2;
-  touch-action: none;
+  touch-action: pan-y;
   pointer-events: none;
   cursor: none;
   filter: brightness(0.58) saturate(0.92) contrast(1.18);
+}
+
+.venue.is-scratchable:not(.is-revealed) .venue__scratch {
+  touch-action: none;
 }
 
 .venue.is-scratchable .venue__scratch {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><circle cx='10' cy='18' r='7' fill='%23d4b07a' stroke='%236a3a1a' stroke-width='1.4'/><path d='M16 13 L24 4' stroke='%23d4b07a' stroke-width='3' stroke-linecap='round'/></svg>") 8 20, crosshair;
 }
 
-.venue.is-scratchable {
+/* Held only while the card is pinned. Leaving it on .is-scratchable blocked
+   every later swipe, because that class stays after the reveal. */
+.venue.is-scroll-locked {
   touch-action: none;
 }
 
