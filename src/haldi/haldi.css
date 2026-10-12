@@ -54,25 +54,27 @@
 }
 
 .haldi__detail-date {
-  width: auto;
-  max-width: 70%;
-  height: 1.45rem;
+  width: 72%;
+  height: auto;
   object-fit: contain;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.35em;
 }
 
 .haldi__detail-line {
   width: 100%;
+  height: auto;
 }
 
 .haldi__detail-theme {
-  width: 84%;
-  margin-top: 0.08rem;
+  width: 86%;
+  height: auto;
+  margin-top: 0.08em;
 }
 
 .haldi__detail-colors {
   width: 100%;
-  margin-top: 0.95rem;
+  height: auto;
+  margin-top: 0.55em;
 }
 
 /* The painting, in its own 1024px-wide pixel space, pinned to the bottom edge. */

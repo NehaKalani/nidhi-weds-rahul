@@ -4,6 +4,7 @@ import "./venue/venue.css";
 import "./haldi/haldi.css";
 import "./sangeet/sangeet.css";
 import "./maayra/maayra.css";
+import "./sunset/sunset.css";
 import "./music/music.css";
 import { createVineRenderer } from "./hero/vineRenderer.js";
 import { createFlowers } from "./hero/flowers.js";
@@ -12,6 +13,7 @@ import { initVenue } from "./venue/venue.js";
 import { initHaldi } from "./haldi/haldi.js";
 import { initSangeet } from "./sangeet/sangeet.js";
 import { initMaayra } from "./maayra/maayra.js";
+import { initSunset } from "./sunset/sunset.js";
 import { initMusic } from "./music/music.js";
 
 const TIMELINE = {
@@ -360,3 +362,4 @@ init();
 initHaldi(document.querySelector(".haldi"));
 initSangeet(document.querySelector(".sangeet"));
 initMaayra(document.querySelector(".maayra"), document.querySelector(".sangeet"));
+initSunset(document.querySelector(".sunset"));

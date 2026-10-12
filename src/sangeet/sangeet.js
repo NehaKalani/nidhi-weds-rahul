@@ -49,6 +49,28 @@ function addSparkles(container) {
   }
 }
 
+function placeBall(section, stage) {
+  const rect = stage.getBoundingClientRect();
+  const u = Math.min(rect.height / POSTER.h, rect.width / POSTER.w);
+  let ball;
+  if (rect.width <= MOBILE.maxWidth) {
+    const r = MOBILE.ballR;
+    ball = { x: rect.width - r - MOBILE.ballInset, y: r * 1.25, r };
+  } else {
+    const posterR = BALL.r * u;
+    const r = Math.max(posterR, BALL.minR);
+    ball = {
+      x: rect.width - BALL.fromRight * u - (r - posterR),
+      y: Math.max(BALL.y * u, r * 1.25),
+      r,
+    };
+  }
+  section.style.setProperty("--u", `${u}px`);
+  // Title and event lines sit just under the hanging disco ball.
+  section.style.setProperty("--ball-clear", `${Math.ceil(ball.y + ball.r + 14)}px`);
+  return { w: rect.width, h: rect.height, u, ball };
+}
+
 export function initSangeet(section) {
   if (!section) return;
   const stage = section.querySelector(".sangeet__stage") || section;
@@ -59,6 +81,8 @@ export function initSangeet(section) {
   if (!backdrop || !lights) {
     section.classList.add("is-static");
     section.classList.add("is-revealed");
+    placeBall(section, stage);
+    new ResizeObserver(() => placeBall(section, stage)).observe(stage);
     return;
   }
 
@@ -69,28 +93,12 @@ export function initSangeet(section) {
   ];
 
   const resize = () => {
-    const rect = stage.getBoundingClientRect();
-    layout.w = rect.width;
-    layout.h = rect.height;
-    layout.u = Math.min(rect.height / POSTER.h, rect.width / POSTER.w);
-    if (rect.width <= MOBILE.maxWidth) {
-      const r = MOBILE.ballR;
-      layout.ball = { x: rect.width - r - MOBILE.ballInset, y: r * 1.25, r };
-    } else {
-      const posterR = BALL.r * layout.u;
-      const r = Math.max(posterR, BALL.minR);
-      layout.ball = {
-        x: rect.width - BALL.fromRight * layout.u - (r - posterR),
-        y: Math.max(BALL.y * layout.u, r * 1.25),
-        r,
-      };
-    }
-    section.style.setProperty("--u", `${layout.u}px`);
+    Object.assign(layout, placeBall(section, stage));
     for (const layer of layers) {
       const s = layer.scale();
       layer.pxScale = s;
-      layer.canvas.width = Math.max(1, Math.round(rect.width * s));
-      layer.canvas.height = Math.max(1, Math.round(rect.height * s));
+      layer.canvas.width = Math.max(1, Math.round(layout.w * s));
+      layer.canvas.height = Math.max(1, Math.round(layout.h * s));
       layer.gl.viewport(0, 0, layer.canvas.width, layer.canvas.height);
     }
     if (!running) draw(lastNow);

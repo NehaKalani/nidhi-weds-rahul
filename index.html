@@ -13,6 +13,7 @@
     />
     <link rel="preload" href="/fonts/amita/Amita-Regular.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preload" as="image" href="/ganesha/ganesha.webp" />
+    <link rel="preload" as="image" href="/hero/srinathji.png" />
     <link rel="preload" as="image" href="/venue/gold.webp" />
     <link rel="icon" href="data:," />
   </head>
@@ -57,6 +58,13 @@
         <div class="hero__stage">
           <div class="hero__veil" aria-hidden="true"></div>
           <div class="hero__intro" aria-hidden="true">
+            <img
+              class="hero__intro-deity"
+              src="/hero/srinathji.png"
+              alt=""
+              width="330"
+              height="442"
+            />
             <p class="hero__intro-kicker">WITH THE BLESSINGS OF</p>
             <p class="hero__intro-names">
               <span>Sri Mohan Lal ji Kalani</span>
@@ -120,6 +128,7 @@
               <canvas class="venue__glow" aria-hidden="true"></canvas>
             </div>
           </div>
+          <p class="venue__scroll-cue">keep scrolling</p>
           <p class="venue__hint"><i>Scratch</i> <i>to</i> <i>reveal</i></p>
           <h2 id="venue-title" class="venue__title">Rang Mahal, Pushkar · 30th and 31st January, 2027</h2>
         </div>
@@ -225,6 +234,43 @@
             </div>
           </div>
           <div class="maayra__hem" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="sunset" id="sunset" aria-label="Evening courtyard">
+        <div class="sunset__stage">
+          <div class="sunset__art">
+            <img class="sunset__sky sunset__sky--day" src="/sunset/sky_sunset.svg" alt="" width="279" height="413" />
+            <img class="sunset__sky sunset__sky--night" src="/sunset/sky_night.svg" alt="" width="281" height="413" />
+            <div class="sunset__city sunset__city--day">
+              <img src="/sunset/city_sunset.svg" alt="" width="426" height="192" />
+            </div>
+            <div class="sunset__city sunset__city--night">
+              <img src="/sunset/city_night.svg" alt="" width="426" height="190" />
+            </div>
+            <img class="sunset__wall" src="/sunset/wall_murals.svg" alt="" width="689" height="217" />
+            <div class="sunset__floor" aria-hidden="true"></div>
+            <img class="sunset__pot sunset__pot--small" src="/sunset/pot_small.png" alt="" width="68" height="180" />
+            <img class="sunset__pot sunset__pot--big" src="/sunset/pot_big.png" alt="" width="145" height="202" />
+            <img class="sunset__pot sunset__pot--banana" src="/sunset/pot_banana.png" alt="" width="90" height="114" />
+            <img class="sunset__pot sunset__pot--bowl" src="/sunset/pot_bowl.png" alt="" width="82" height="24" />
+            <img class="sunset__pot sunset__pot--right" src="/sunset/pot_right.png" alt="" width="96" height="141" />
+            <img class="sunset__lantern sunset__lantern--off" src="/sunset/lantern_off.svg" alt="" width="104" height="146" />
+            <img class="sunset__lantern sunset__lantern--on" src="/sunset/lantern_on.svg" alt="" width="101" height="146" />
+            <div class="sunset__sofa sunset__sofa--day">
+              <img src="/sunset/sofa_sunset.svg" alt="" width="402" height="172" />
+            </div>
+            <div class="sunset__sofa sunset__sofa--night">
+              <img src="/sunset/sofa_night.svg" alt="" width="361" height="174" />
+            </div>
+            <img class="sunset__musicians sunset__musicians--day" src="/sunset/musicians_sunset.svg" alt="" width="358" height="201" />
+            <img class="sunset__musicians sunset__musicians--night" src="/sunset/musicians_night.svg" alt="" width="379" height="201" />
+            <img class="sunset__carpet sunset__carpet--day" src="/sunset/carpet_sunset.svg" alt="" width="420" height="110" />
+            <img class="sunset__carpet sunset__carpet--night" src="/sunset/carpet_night.svg" alt="" width="395" height="110" />
+            <div class="sunset__day" aria-hidden="true"></div>
+            <img class="sunset__banner" src="/sunset/scroll_unrolled.svg" alt="" width="290" height="483" />
+            <img class="sunset__roll" src="/sunset/scroll_rolled.svg" alt="" width="215" height="137" />
+          </div>
         </div>
       </section>
     </main>

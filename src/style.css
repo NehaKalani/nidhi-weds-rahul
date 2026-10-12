@@ -19,7 +19,9 @@
   --ivory-deep: #f1e9da;
   --leaf: #4b6a2c;
   --leaf-soft: rgba(75, 106, 44, 0.45);
-  --hero-width: min(90vw, 820px, max(18rem, calc((100svh - 30rem) * 1.35)));
+  /* 90vw on a 402px-wide iPhone 17 Pro, including Safari's shorter visible height.
+     The height term only takes over on genuinely short screens. */
+  --hero-width: min(90vw, 820px, max(16rem, calc((100svh - 16rem) * 1.55)));
 }
 
 *,
@@ -102,6 +104,15 @@ body::before {
   margin: 0;
 }
 
+.hero__intro-deity {
+  display: block;
+  width: auto;
+  height: clamp(4.4rem, 11vh, 6.4rem);
+  margin: 0 auto 0.42rem;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .hero__intro-kicker {
   font-family: Cinzel, "Times New Roman", serif;
   font-weight: 700;
@@ -145,6 +156,43 @@ body::before {
   line-height: 1.2;
   color: #3d342c;
   font-synthesis: none;
+}
+
+/* iPhone SE / mini (~375×667): shrink deity + blessings so they fit the top third. */
+@media (max-width: 380px) {
+  .hero__intro {
+    margin: 0 0 0.75rem;
+  }
+
+  .hero__intro-deity {
+    height: clamp(2.45rem, 7.4vh, 3.25rem);
+    margin-bottom: 0.2rem;
+  }
+
+  .hero__intro-kicker {
+    font-size: 0.54rem;
+    letter-spacing: 0.16em;
+  }
+
+  .hero__intro-names {
+    margin-top: 0.2rem;
+  }
+
+  .hero__intro-names span {
+    font-size: 0.82rem;
+    line-height: 1.14;
+  }
+
+  .hero__intro-family {
+    margin-top: 0.16rem;
+    font-size: 0.8rem;
+    line-height: 1.18;
+  }
+
+  .hero__intro-invite {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+  }
 }
 
 .is-static .hero__intro,

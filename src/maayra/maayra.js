@@ -8,8 +8,32 @@ function easeInOut(t) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
 
+const CARD = { w: 408, h: 654 };
+// Share of the card image that is the yellow panel, not the clear margin.
+const YELLOW_FILL = 0.754;
+
+function sizeCard(section) {
+  const vw = section.clientWidth;
+  const vh = section.clientHeight || window.innerHeight;
+  const aspect = CARD.h / CARD.w;
+  const widthLocked = vw * aspect;
+  // A short or wide window keeps the card inside the viewport.
+  // A narrow, tall window grows it so the yellow stays about 70% of the screen
+  // and the bandhani border shrinks instead of filling the extra height.
+  let height = Math.min(vh * 0.92, widthLocked);
+  if (widthLocked < vh * 0.98) {
+    const fraction = (YELLOW_FILL * vw * widthLocked) / (vw * vh);
+    const scale = Math.max(1, Math.sqrt(0.7 / Math.max(fraction, 0.05)));
+    height = widthLocked * scale;
+  }
+  section.style.setProperty("--yellow-h", `${Math.round(height)}px`);
+}
+
 export function initMaayra(section, sangeet) {
   if (!section) return;
+
+  sizeCard(section);
+  window.addEventListener("resize", () => sizeCard(section));
 
   if (reducedMotion || !sangeet) {
     section.classList.add("is-revealed");

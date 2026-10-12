@@ -3,7 +3,7 @@ const GLOW_PASSES = 1;
 const CLEAR_AT = 0.14;
 const BRUSH = 64;
 const REVEAL_STROKES = 5;
-const MOVE = {
+let handMoves = {
   krishna: { x: -340, y: 16 },
   radhaSide: { x: 330, y: 20 },
 };
@@ -40,6 +40,21 @@ function frameArt(frame, art, layout) {
   const x = (frame.clientWidth - layout.width * scale) / 2;
   const y = (frame.clientHeight - layout.height * scale) / 2;
   art.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+  return { scale, x, y };
+}
+
+// Parted hands sit on the viewport edges, in the art's own pixel space.
+// Wide screens use the longer sleeves, and slide them out past the edges
+// so the center still opens while the extra arm stays in view.
+function edgeMoves(frame, pieces, placed, wide) {
+  const { scale, x } = placed;
+  const krishna = pieces.krishna;
+  const radha = pieces.radha;
+  const slide = wide ? wide.slide || 0 : 0;
+  return {
+    krishna: { x: -x / scale - krishna.x - slide, y: wide ? 10 : 16 },
+    radhaSide: { x: (frame.clientWidth - x) / scale - (radha.x + radha.w) + slide, y: wide ? 10 : 20 },
+  };
 }
 
 function drawGlowAt(ctx, mask, t) {
@@ -145,6 +160,7 @@ export async function initVenue(section) {
   const scratch = section.querySelector(".venue__scratch");
   const glowCanvas = section.querySelector(".venue__glow");
   const hint = section.querySelector(".venue__hint");
+  const scrollCue = section.querySelector(".venue__scroll-cue");
   const movers = {
     krishna: section.querySelector(".venue__krishna"),
     radhaSide: section.querySelector(".venue__radha-side"),
@@ -197,10 +213,27 @@ export async function initVenue(section) {
     loadImage(`${BASE}/lotus-glow.webp`),
   ]);
 
-  const boxes = layout.pieces;
-  place(movers.krishna, boxes.krishna);
-  place(section.querySelector(".venue__radha"), boxes.radha);
-  place(glowCanvas, layout.glow);
+  const krishnaImg = movers.krishna;
+  const radhaImg = section.querySelector(".venue__radha");
+  let wideHands = false;
+
+  const handsFor = (width) => (width >= 720 && layout.wide ? layout.wide : null);
+
+  const applyHands = (placed) => {
+    const wide = handsFor(stage.clientWidth);
+    if (Boolean(wide) !== wideHands) {
+      wideHands = Boolean(wide);
+      krishnaImg.src = wide ? `${BASE}/krishna-wide.png` : `${BASE}/krishna.svg`;
+      radhaImg.src = wide ? `${BASE}/radha-wide.png` : `${BASE}/radha.svg`;
+    }
+    const pieces = wide ? wide.pieces : layout.pieces;
+    place(krishnaImg, pieces.krishna);
+    place(radhaImg, pieces.radha);
+    place(glowCanvas, wide ? wide.glow : layout.glow);
+    handMoves = edgeMoves(stage, pieces, placed, wide);
+  };
+
+  applyHands(frameArt(stage, art, layout));
 
   const ctx = scratch.getContext("2d", { alpha: true, willReadFrequently: true });
   scratch.width = layout.width;
@@ -212,7 +245,11 @@ export async function initVenue(section) {
   tickCountdown();
   window.setInterval(tickCountdown, 1000);
 
-  const frame = () => frameArt(stage, art, layout);
+  let onFrame = () => {};
+  const frame = () => {
+    applyHands(frameArt(stage, art, layout));
+    onFrame();
+  };
   new ResizeObserver(frame).observe(stage);
   frame();
 
@@ -263,6 +300,7 @@ export async function initVenue(section) {
     revealed = true;
     scratch.style.pointerEvents = "none";
     hint?.classList.remove("is-on");
+    scrollCue?.classList.remove("is-on");
     ctx.clearRect(0, 0, layout.width, layout.height);
     pinY = section.offsetTop;
     section.classList.add("is-revealed");
@@ -359,7 +397,7 @@ export async function initVenue(section) {
 
     for (const [name, el] of Object.entries(movers)) {
       if (!el) continue;
-      const to = MOVE[name];
+      const to = handMoves[name];
       el.style.opacity = "1";
       el.style.transform = to ? `translate(${to.x * part}px, ${to.y * part}px)` : "";
     }
@@ -373,6 +411,7 @@ export async function initVenue(section) {
       enableScratch();
     }
     hint?.classList.toggle("is-on", parted && !revealed);
+    scrollCue?.classList.toggle("is-on", !parted && !revealed && !section.classList.contains("is-held"));
   };
 
   const requestRitual = () => {
@@ -381,6 +420,11 @@ export async function initVenue(section) {
       ritualFrame = 0;
       setProgress(ritualProgress());
     });
+  };
+
+  onFrame = () => {
+    lastProgress = -1;
+    requestRitual();
   };
 
   setProgress(ritualProgress());

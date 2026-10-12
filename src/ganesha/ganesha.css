@@ -165,12 +165,13 @@ html.is-ganesha-held body {
 
 @media (max-width: 720px) {
   .ganesha__shloka {
-    font-size: clamp(1.05rem, 4.4vw, 1.45rem);
+    /* Two lines, sized to the phone width. 15.2em is the longer line in Amita. */
+    font-size: min(1.62rem, calc((100vw - 2.75rem) / 15.2));
   }
 
   .ganesha__figure {
-    max-width: min(88vw, 360px);
-    max-height: min(52svh, 400px);
+    max-width: min(88vw, 22.5rem);
+    max-height: min(56svh, calc(100svh - 16.5rem));
   }
 
   .ganesha__invite-label {

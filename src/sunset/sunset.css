@@ -1,0 +1,241 @@
+.sunset {
+  --golden: 0;
+  --unroll: 0;
+  --night: 0;
+  position: relative;
+  height: calc(100svh + 130svh);
+  background: #140e12;
+}
+
+.sunset__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: #e7a15c;
+}
+
+.sunset__art {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 941px;
+  height: 1672px;
+  transform-origin: 0 0;
+  background: #ce9a70;
+}
+
+.sunset__sky,
+.sunset__city,
+.sunset__wall,
+.sunset__floor,
+.sunset__pot,
+.sunset__lantern,
+.sunset__sofa,
+.sunset__musicians,
+.sunset__carpet,
+.sunset__day,
+.sunset__banner,
+.sunset__roll {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.sunset__sky {
+  inset: 0;
+  width: 941px;
+  height: 1672px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.sunset__sky--day,
+.sunset__city--day,
+.sunset__sofa--day,
+.sunset__musicians--day,
+.sunset__carpet--day,
+.sunset__lantern--off {
+  opacity: calc(1 - var(--night));
+}
+
+.sunset__sky--night,
+.sunset__city--night,
+.sunset__sofa--night,
+.sunset__musicians--night,
+.sunset__carpet--night,
+.sunset__lantern--on {
+  opacity: var(--night);
+}
+
+/* Full skyline, sharp. Only the empty sky above the domes feathers into the sky layer. */
+.sunset__city {
+  left: -50px;
+  top: 470px;
+  z-index: 2;
+  width: 1040px;
+  height: auto;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%);
+}
+
+.sunset__city img {
+  width: 1040px;
+  height: auto;
+}
+
+.sunset__wall {
+  left: -50px;
+  top: 900px;
+  z-index: 3;
+  width: 1040px;
+  height: auto;
+}
+
+.sunset__floor {
+  left: 0;
+  top: 1185px;
+  z-index: 3;
+  width: 941px;
+  height: 487px;
+  background: #ce9a70;
+}
+
+.sunset__lantern {
+  left: 36px;
+  top: 1010px;
+  z-index: 4;
+  width: 96px;
+  height: auto;
+}
+
+/* Each pot is its own cutout, so they can sit at different sizes. */
+.sunset__pot {
+  z-index: 5;
+  height: auto;
+}
+
+.sunset__pot--small {
+  left: 150px;
+  top: 820px;
+  width: 92px;
+}
+
+.sunset__pot--big {
+  left: 255px;
+  top: 850px;
+  width: 158px;
+}
+
+.sunset__pot--banana {
+  left: 430px;
+  top: 900px;
+  width: 136px;
+}
+
+.sunset__pot--bowl {
+  left: 590px;
+  top: 948px;
+  width: 118px;
+}
+
+.sunset__pot--right {
+  left: 720px;
+  top: 910px;
+  width: 104px;
+}
+
+.sunset__carpet {
+  left: 160px;
+  top: 1446px;
+  z-index: 5;
+  width: 640px;
+  height: auto;
+}
+
+/* The day rug plate has a stray sofa scrap in the top-left corner. */
+.sunset__carpet--day {
+  clip-path: polygon(11% 0, 100% 0, 100% 100%, 0 100%, 0 16%, 11% 16%);
+}
+
+.sunset__sofa {
+  left: 20px;
+  top: 1088px;
+  z-index: 6;
+  width: 900px;
+  overflow: hidden;
+}
+
+.sunset__sofa--day {
+  left: 30px;
+  top: 1138px;
+  width: 880px;
+  height: 316px;
+}
+
+.sunset__sofa--night {
+  height: 366px;
+}
+
+.sunset__sofa img {
+  width: 900px;
+  height: auto;
+}
+
+.sunset__sofa--day img {
+  width: 880px;
+}
+
+.sunset__musicians {
+  left: 160px;
+  top: 998px;
+  z-index: 7;
+  width: 620px;
+  height: auto;
+}
+
+/* Earlier light, fading as the hour turns gold. */
+.sunset__day {
+  left: 0;
+  top: 0;
+  z-index: 9;
+  width: 941px;
+  height: 1100px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 244, 224, 0.72) 0%,
+    rgba(255, 214, 168, 0.38) 38%,
+    rgba(255, 170, 100, 0) 78%
+  );
+  opacity: calc(1 - var(--golden));
+}
+
+.sunset__banner {
+  left: 390px;
+  top: 146px;
+  z-index: 10;
+  width: 400px;
+  height: auto;
+  clip-path: inset(0 0 calc((1 - var(--unroll)) * 100%) 0);
+}
+
+.sunset__roll {
+  left: 390px;
+  top: 10px;
+  z-index: 11;
+  width: 400px;
+  height: auto;
+  opacity: calc(1 - min(1, var(--unroll) * 2.4));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sunset {
+    --golden: 1;
+    --unroll: 1;
+    --night: 0;
+    height: 100svh;
+  }
+
+  .sunset__stage {
+    position: relative;
+  }
+}

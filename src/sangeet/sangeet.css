@@ -31,7 +31,8 @@
 }
 
 .sangeet {
-  --sangeet-height: max(100svh, 640px, min(100vw * 1492 / 979, 135.5svh));
+  /* The stage stays one screen tall, so the title and the collage are both in view. */
+  --sangeet-height: 100svh;
   --sangeet-roll: 118svh;
   --title-top: calc(13 * var(--u));
   --title-w: calc(563 * var(--u));
@@ -101,11 +102,12 @@
 
 .sangeet__title {
   position: absolute;
-  z-index: 2;
-  left: calc(7 * var(--u));
-  top: calc(13 * var(--u));
-  width: calc(563 * var(--u));
-  margin: 0;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: max(var(--ball-clear, 7.5rem), env(safe-area-inset-top));
+  width: min(76vw, 34svh, 28rem);
+  margin: 0 auto;
   opacity: 0;
   transform: translateY(-8%) rotate(-5deg) scale(0.9);
   transform-origin: 30% 60%;
@@ -125,8 +127,10 @@
   position: absolute;
   z-index: 2;
   left: 0;
+  right: auto;
   bottom: 0;
-  width: calc(886 * var(--u));
+  /* Flush left, and larger as the window gets wider, without growing past the stage. */
+  width: min(54vw, 48rem, calc(100svh * 886 / 1019));
   opacity: 0;
   transform: translateY(10%);
   transition:
@@ -142,15 +146,16 @@
 
 .sangeet__details {
   position: absolute;
-  left: calc(7 * var(--u));
-  top: calc(var(--title-top) + var(--title-w) * 0.9);
-  width: var(--title-w);
+  left: 0;
+  right: 0;
+  top: calc(max(var(--ball-clear, 7.5rem), env(safe-area-inset-top)) + min(76vw, 34svh, 28rem) / 1.1705 + 0.35rem);
+  width: min(92vw, 32rem);
+  margin: 0 auto;
   z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.22rem;
-  margin: 0;
   font-family: "Google Sans", "Helvetica Neue", sans-serif;
   font-weight: 600;
   font-size: clamp(0.82rem, 3.3vw, 1.02rem);
@@ -180,32 +185,43 @@
   text-transform: none;
 }
 
-@media (max-width: 640px) {
-  .sangeet {
-    --sangeet-height: max(100svh, 560px);
-    --sangeet-roll: 118svh;
-    --title-top: max(116px, 14svh);
-    --title-w: min(72vw, 33svh);
-    --cluster-w: min(94vw, 42svh);
-  }
-
+@media (min-width: 960px) {
   .sangeet__title {
-    left: calc((100% - var(--title-w)) / 2);
-    top: var(--title-top);
-    width: var(--title-w);
-    transform-origin: 50% 50%;
-  }
-
-  .sangeet__cluster {
-    width: var(--cluster-w);
+    left: auto;
+    /* Stay clear of the disco ball in the top-right corner. */
+    right: max(10.5rem, 16vw);
+    width: min(26vw, 17rem);
+    margin: 0;
+    top: max(var(--ball-clear, 7.5rem), env(safe-area-inset-top));
   }
 
   .sangeet__details {
-    left: calc((100% - var(--title-w)) / 2);
-    right: auto;
-    top: calc(var(--title-top) + var(--title-w) * 0.92);
-    width: var(--title-w);
-    bottom: auto;
+    left: auto;
+    right: max(10.5rem, 16vw);
+    width: calc(46vw - max(10.5rem, 16vw) - 1rem);
+    margin: 0;
+    top: calc(max(var(--ball-clear, 7.5rem), env(safe-area-inset-top)) + min(26vw, 17rem) / 1.1705 + 0.4rem);
+    container-type: inline-size;
+    font-size: clamp(0.68rem, 1.2vw, 0.92rem);
+  }
+
+  .sangeet__details p:last-child {
+    font-size: 4.1cqi;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 959px) {
+  .sangeet__cluster {
+    /* Stay under the title and the event lines, and grow with the width until then. */
+    width: min(
+      92vw,
+      calc(
+        (100svh - var(--ball-clear, 7.5rem) - min(76vw, 34svh, 28rem) / 1.1705 - 7.5rem) *
+          886 / 1019
+      )
+    );
   }
 }
 

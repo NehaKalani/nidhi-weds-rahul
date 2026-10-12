@@ -69,7 +69,7 @@
   left: 50%;
   z-index: 1;
   width: auto;
-  height: 90svh;
+  height: var(--yellow-h, min(92svh, calc(100vw * 654 / 408)));
   transform: translate(-50%, -50%);
 }
 

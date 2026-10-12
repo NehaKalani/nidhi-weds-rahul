@@ -186,12 +186,26 @@ export async function initHaldi(section) {
   const resize = () => {
     const w = section.clientWidth;
     const h = section.clientHeight;
-    let scale = w / (FRAME.x1 - FRAME.x0);
-    let gap = 0;
-    if (h / scale > painting.h) {
-      gap = Math.ceil((h / scale - painting.h) / tileH) * tileH;
-    } else {
-      scale = h / painting.h;
+    const frameW = FRAME.x1 - FRAME.x0;
+    // Sky under the lettering has to stay large enough for the date and theme.
+    // A wider window must not grow the painting into that sky, so the scale
+    // follows the lower scene, not the width.
+    const textBand = Math.min(Math.max(h * 0.3, 156), 230);
+    const titleBottom = 145 - LETTERING_LIFT + 405;
+    const openSky = HORIZON_Y - titleBottom;
+    const gapFactor = 1 - LETTERING_DROP;
+    const skyScale = (h * 0.58) / (painting.h - HORIZON_Y);
+    let scale = Math.min(w / frameW, skyScale);
+    const gapFor = (s) => {
+      const need = textBand / s - openSky;
+      return need > 0 ? Math.ceil(need / gapFactor / tileH) * tileH : 0;
+    };
+    let gap = gapFor(scale);
+    const fitted = h / (painting.h + gap);
+    if (scale > fitted) {
+      scale = fitted;
+      gap = gapFor(scale);
+      scale = Math.min(scale, h / (painting.h + gap));
     }
     const offsetX = w / 2 - ((FRAME.x0 + FRAME.x1) / 2) * scale;
     section.style.setProperty("--gap", `${gap}px`);
