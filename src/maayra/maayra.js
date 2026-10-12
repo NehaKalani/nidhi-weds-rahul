@@ -1,3 +1,5 @@
+import { onScrollFrame } from "../lib/scroll.js";
+
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function clamp01(value) {
@@ -42,15 +44,23 @@ export function initMaayra(section, sangeet) {
     return;
   }
 
-  let frameId = 0;
   let settled = false;
+  let sangeetTop = 0;
+  let rollSpan = 1;
+  let sectionTop = 0;
+
+  const measure = () => {
+    const stage = sangeet.querySelector(".sangeet__stage") || sangeet;
+    sangeetTop = sangeet.offsetTop;
+    rollSpan = Math.max(sangeet.offsetHeight - stage.offsetHeight, window.innerHeight * 0.9);
+    sectionTop = section.offsetTop;
+  };
+  measure();
 
   const apply = () => {
-    const top = sangeet.getBoundingClientRect().top;
-    const stage = sangeet.querySelector(".sangeet__stage") || sangeet;
-    const rollSpan = Math.max(sangeet.offsetHeight - stage.offsetHeight, window.innerHeight * 0.9);
+    const top = sangeetTop - window.scrollY;
     const raw = top >= 0 ? 0 : clamp01(-top / rollSpan);
-    const pinned = section.getBoundingClientRect().top <= 2;
+    const pinned = sectionTop - window.scrollY <= 2;
     const roll = pinned ? 1 : easeInOut(raw);
     const title = pinned || raw >= 0.14 ? 1 : 0;
     const down = roll >= 0.985;
@@ -69,15 +79,9 @@ export function initMaayra(section, sangeet) {
     section.classList.toggle("is-revealed", title > 0.04 || pinned || down);
   };
 
-  const request = () => {
-    if (frameId) return;
-    frameId = requestAnimationFrame(() => {
-      frameId = 0;
-      apply();
-    });
-  };
-
-  apply();
-  window.addEventListener("scroll", request, { passive: true });
-  window.addEventListener("resize", request);
+  new ResizeObserver(() => {
+    measure();
+    apply();
+  }).observe(sangeet);
+  onScrollFrame(apply);
 }

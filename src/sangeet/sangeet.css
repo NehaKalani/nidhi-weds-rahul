@@ -32,8 +32,8 @@
 
 .sangeet {
   /* The stage stays one screen tall, so the title and the collage are both in view. */
-  --sangeet-height: 100svh;
-  --sangeet-roll: 118svh;
+  --sangeet-height: var(--app-h);
+  --sangeet-roll: calc(var(--app-h) * 1.18);
   --title-top: calc(13 * var(--u));
   --title-w: calc(563 * var(--u));
   --u: min(calc(var(--sangeet-height) / 1492), calc(100vw / 979));
@@ -106,7 +106,7 @@
   left: 0;
   right: 0;
   top: max(var(--ball-clear, 7.5rem), env(safe-area-inset-top));
-  width: min(76vw, 34svh, 28rem);
+  width: min(76vw, calc(var(--app-h) * 0.34), 28rem);
   margin: 0 auto;
   opacity: 0;
   transform: translateY(-8%) rotate(-5deg) scale(0.9);
@@ -130,7 +130,7 @@
   right: auto;
   bottom: 0;
   /* Flush left, and larger as the window gets wider, without growing past the stage. */
-  width: min(54vw, 48rem, calc(100svh * 886 / 1019));
+  width: min(54vw, 48rem, calc(var(--app-h) * 886 / 1019));
   opacity: 0;
   transform: translateY(10%);
   transition:
@@ -148,7 +148,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(max(var(--ball-clear, 7.5rem), env(safe-area-inset-top)) + min(76vw, 34svh, 28rem) / 1.1705 + 0.35rem);
+  top: calc(max(var(--ball-clear, 7.5rem), env(safe-area-inset-top)) + min(76vw, calc(var(--app-h) * 0.34), 28rem) / 1.1705 + 0.35rem);
   width: min(92vw, 32rem);
   margin: 0 auto;
   z-index: 4;
@@ -218,7 +218,7 @@
     width: min(
       92vw,
       calc(
-        (100svh - var(--ball-clear, 7.5rem) - min(76vw, 34svh, 28rem) / 1.1705 - 7.5rem) *
+        (var(--app-h) - var(--ball-clear, 7.5rem) - min(76vw, calc(var(--app-h) * 0.34), 28rem) / 1.1705 - 7.5rem) *
           886 / 1019
       )
     );

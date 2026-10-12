@@ -39,15 +39,21 @@ export function initGanesha(section, music) {
   window.addEventListener("touchmove", blockGesture, { passive: false });
   window.addEventListener("keydown", blockKeys);
 
+  const release = () => {
+    window.removeEventListener("scroll", keepStill);
+    window.removeEventListener("wheel", blockGesture);
+    window.removeEventListener("touchmove", blockGesture);
+    window.removeEventListener("keydown", blockKeys);
+  };
+
   const open = () => {
     if (!held) return;
     held = false;
+    release();
     root.classList.remove("is-ganesha-held");
     music?.invite();
     const top = hero ? hero.offsetTop : section.offsetTop + section.offsetHeight;
-    requestAnimationFrame(() => {
-      window.scrollTo({ top, behavior: "smooth" });
-    });
+    window.scrollTo(0, top);
   };
 
   invite?.addEventListener("click", open);

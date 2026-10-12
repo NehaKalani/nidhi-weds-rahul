@@ -13,7 +13,7 @@
   --scene: 1;
   position: relative;
   z-index: 1;
-  height: calc(100svh + 300vh);
+  height: calc(var(--app-h) * 4);
   min-height: 560px;
   background:
     radial-gradient(70% 55% at 50% 42%, #6a1b2a 0%, #3a0a14 58%, #24060d 100%),
@@ -23,14 +23,14 @@
 .venue__stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: var(--app-h);
   min-height: 560px;
   overflow: hidden;
   isolation: isolate;
 }
 
 .venue.is-revealed {
-  height: 100svh;
+  height: var(--app-h);
   background:
     radial-gradient(70% 55% at 50% 42%, #6a1b2a 0%, #3a0a14 58%, #24060d 100%),
     #2a0810;
@@ -38,7 +38,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .venue {
-    height: 100svh;
+    height: var(--app-h);
   }
 }
 
@@ -55,7 +55,6 @@
   height: calc(var(--venue-h) * 1px);
   transform-origin: 0 0;
   opacity: var(--foil);
-  will-change: transform, opacity;
 }
 
 /* Held back while Ganesha is on screen, so the foil cannot cover it. */
@@ -76,7 +75,6 @@
 
 .venue.is-revealed .venue__stage {
   opacity: var(--scene);
-  will-change: opacity;
   background:
     radial-gradient(70% 55% at 50% 42%, #6a1b2a 0%, #3a0a14 58%, #24060d 100%),
     #2a0810;
@@ -221,7 +219,7 @@
   bottom: 0;
   display: block;
   width: 100%;
-  height: min(78svh, calc(100svh - 14.5rem));
+  height: min(calc(var(--app-h) * 0.78), calc(var(--app-h) - 14.5rem));
   max-width: none;
   object-fit: cover;
   object-position: 50% 100%;
@@ -236,7 +234,7 @@
 
 @media (min-width: 700px) {
   .venue__building {
-    height: 100svh;
+    height: var(--app-h);
     object-position: 50% 72%;
   }
 }
@@ -311,7 +309,6 @@
   margin: 0;
   object-fit: fill;
   pointer-events: none;
-  will-change: transform, opacity;
 }
 
 .venue__radha-side {
@@ -319,7 +316,6 @@
   inset: 0;
   z-index: 5;
   pointer-events: none;
-  will-change: transform, opacity;
 }
 
 .venue__krishna,

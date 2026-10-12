@@ -28,8 +28,8 @@ html.is-ganesha-held body {
   --ganesha-ivory: #fffaf2;
   position: relative;
   z-index: 30;
-  height: 100svh;
-  min-height: 100svh;
+  height: var(--app-h);
+  min-height: var(--app-h);
   touch-action: none;
   background: var(--ganesha-olive);
 }
@@ -81,7 +81,7 @@ html.is-ganesha-held body {
   height: auto;
   width: auto;
   max-width: min(86vw, 460px);
-  max-height: min(58svh, 500px);
+  max-height: min(calc(var(--app-h) * 0.58), 500px);
   object-fit: contain;
   filter: drop-shadow(0 20px 26px rgba(32, 38, 12, 0.22));
   user-select: none;
@@ -171,7 +171,7 @@ html.is-ganesha-held body {
 
   .ganesha__figure {
     max-width: min(88vw, 22.5rem);
-    max-height: min(56svh, calc(100svh - 16.5rem));
+    max-height: min(calc(var(--app-h) * 0.56), calc(var(--app-h) - 16.5rem));
   }
 
   .ganesha__invite-label {

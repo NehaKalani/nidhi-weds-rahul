@@ -43,17 +43,18 @@ function frameArt(frame, art, layout) {
   return { scale, x, y };
 }
 
-// Parted hands sit on the viewport edges, in the art's own pixel space.
-// Wide screens use the longer sleeves, and slide them out past the edges
-// so the center still opens while the extra arm stays in view.
-function edgeMoves(frame, pieces, placed, wide) {
+// Parted hands stay on the original art and open just far enough
+// for "Scratch to reveal" to sit between them.
+function edgeMoves(frame, layout, placed, hintWidth) {
   const { scale, x } = placed;
-  const krishna = pieces.krishna;
-  const radha = pieces.radha;
-  const slide = wide ? wide.slide || 0 : 0;
+  const krishna = layout.pieces.krishna;
+  const radha = layout.pieces.radha;
+  const gap = Math.max(hintWidth, 160) + 56;
+  const half = Math.min(gap / 2, frame.clientWidth * 0.34);
+  const mid = frame.clientWidth / 2;
   return {
-    krishna: { x: -x / scale - krishna.x - slide, y: wide ? 10 : 16 },
-    radhaSide: { x: (frame.clientWidth - x) / scale - (radha.x + radha.w) + slide, y: wide ? 10 : 20 },
+    krishna: { x: (mid - half - x) / scale - (krishna.x + krishna.w), y: 16 },
+    radhaSide: { x: (mid + half - x) / scale - radha.x, y: 20 },
   };
 }
 
@@ -213,24 +214,14 @@ export async function initVenue(section) {
     loadImage(`${BASE}/lotus-glow.webp`),
   ]);
 
-  const krishnaImg = movers.krishna;
-  const radhaImg = section.querySelector(".venue__radha");
-  let wideHands = false;
-
-  const handsFor = (width) => (width >= 720 && layout.wide ? layout.wide : null);
+  const boxes = layout.pieces;
+  place(movers.krishna, boxes.krishna);
+  place(section.querySelector(".venue__radha"), boxes.radha);
+  place(glowCanvas, layout.glow);
 
   const applyHands = (placed) => {
-    const wide = handsFor(stage.clientWidth);
-    if (Boolean(wide) !== wideHands) {
-      wideHands = Boolean(wide);
-      krishnaImg.src = wide ? `${BASE}/krishna-wide.png` : `${BASE}/krishna.svg`;
-      radhaImg.src = wide ? `${BASE}/radha-wide.png` : `${BASE}/radha.svg`;
-    }
-    const pieces = wide ? wide.pieces : layout.pieces;
-    place(krishnaImg, pieces.krishna);
-    place(radhaImg, pieces.radha);
-    place(glowCanvas, wide ? wide.glow : layout.glow);
-    handMoves = edgeMoves(stage, pieces, placed, wide);
+    const hintWidth = hint ? hint.getBoundingClientRect().width : 0;
+    handMoves = edgeMoves(stage, layout, placed, hintWidth);
   };
 
   applyHands(frameArt(stage, art, layout));
@@ -252,6 +243,7 @@ export async function initVenue(section) {
   };
   new ResizeObserver(frame).observe(stage);
   frame();
+  document.fonts?.ready.then(frame);
 
   let revealed = false;
   let scratchReady = false;
@@ -262,21 +254,12 @@ export async function initVenue(section) {
   let glowOnce = 0;
   let lastTouchY = 0;
 
-  const holdToPin = () => {
-    if (mayLeave) return;
-    if (scratchReady && !revealed) {
-      if (window.scrollY > pinY + 1) window.scrollTo(0, pinY);
-      return;
-    }
-    if (!revealed) return;
-    if (Math.abs(window.scrollY - pinY) > 1) window.scrollTo(0, pinY);
-  };
-
   const waitForRest = () => {
     if (mayLeave) return;
     window.clearTimeout(settleTimer);
     settleTimer = window.setTimeout(() => {
       mayLeave = true;
+      syncPin();
     }, 450);
   };
 
@@ -306,6 +289,7 @@ export async function initVenue(section) {
     section.classList.add("is-revealed");
     pinY = section.offsetTop;
     window.scrollTo(0, pinY);
+    syncPin();
     lastProgress = -1;
     setProgress(1);
     mayLeave = false;
@@ -378,12 +362,18 @@ export async function initVenue(section) {
   const glowCtx = glowCanvas.getContext("2d");
   let lastProgress = -1;
   let ritualFrame = 0;
+  let sectionTop = 0;
+  let range = 1;
+
+  const measureRitual = () => {
+    sectionTop = section.offsetTop;
+    range = Math.max(section.offsetHeight - window.innerHeight, 1);
+  };
+  measureRitual();
 
   const ritualProgress = () => {
     if (revealed) return 1;
-    const range = section.offsetHeight - window.innerHeight;
-    if (range <= 0) return section.getBoundingClientRect().top < 8 ? 1 : 0;
-    return clamp01((window.scrollY - section.offsetTop) / range);
+    return clamp01((window.scrollY - sectionTop) / range);
   };
 
   const setProgress = (progress) => {
@@ -409,6 +399,7 @@ export async function initVenue(section) {
       scratchReady = true;
       pinY = window.scrollY;
       enableScratch();
+      syncPin();
     }
     hint?.classList.toggle("is-on", parted && !revealed);
     scrollCue?.classList.toggle("is-on", !parted && !revealed && !section.classList.contains("is-held"));
@@ -428,15 +419,11 @@ export async function initVenue(section) {
   };
 
   setProgress(ritualProgress());
-  window.addEventListener(
-    "scroll",
-    () => {
-      holdToPin();
-      requestRitual();
-    },
-    { passive: true },
-  );
-  window.addEventListener("resize", requestRitual);
+  window.addEventListener("scroll", requestRitual, { passive: true });
+  window.addEventListener("resize", () => {
+    measureRitual();
+    requestRitual();
+  });
 
   const isScrollPast = (event) => {
     if (event.type === "wheel") return event.deltaY > 0;
@@ -453,14 +440,11 @@ export async function initVenue(section) {
     if (blockUntilScratch()) {
       if (!isScrollPast(event)) return;
       event.preventDefault();
-      window.scrollTo(0, pinY);
       shakeScratch();
       return;
     }
     if (!revealed || mayLeave) return;
     event.preventDefault();
-    window.scrollTo(0, pinY);
-    waitForRest();
   };
 
   const blockVenueKeys = (event) => {
@@ -468,22 +452,32 @@ export async function initVenue(section) {
     if (blockUntilScratch()) {
       if (!isScrollPast(event)) return;
       event.preventDefault();
-      window.scrollTo(0, pinY);
       shakeScratch();
       return;
     }
     if (!revealed || mayLeave) return;
     event.preventDefault();
-    window.scrollTo(0, pinY);
-    waitForRest();
+  };
+
+  let pinOn = false;
+  const syncPin = () => {
+    const need = (scratchReady && !revealed) || (revealed && !mayLeave);
+    if (need === pinOn) return;
+    pinOn = need;
+    if (need) {
+      window.addEventListener("wheel", blockVenueScroll, { passive: false });
+      window.addEventListener("touchmove", blockVenueScroll, { passive: false });
+      window.addEventListener("keydown", blockVenueKeys);
+      return;
+    }
+    window.removeEventListener("wheel", blockVenueScroll);
+    window.removeEventListener("touchmove", blockVenueScroll);
+    window.removeEventListener("keydown", blockVenueKeys);
   };
 
   window.addEventListener("touchstart", (event) => {
     lastTouchY = event.touches?.[0]?.clientY ?? 0;
   }, { passive: true });
-  window.addEventListener("wheel", blockVenueScroll, { passive: false });
-  window.addEventListener("touchmove", blockVenueScroll, { passive: false });
-  window.addEventListener("keydown", blockVenueKeys);
 
   return {
     setProgress,

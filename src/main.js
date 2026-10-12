@@ -15,6 +15,7 @@ import { initSangeet } from "./sangeet/sangeet.js";
 import { initMaayra } from "./maayra/maayra.js";
 import { initSunset } from "./sunset/sunset.js";
 import { initMusic } from "./music/music.js";
+import { lockViewport } from "./lib/viewport.js";
 
 const TIMELINE = {
   nidhi: { mossStart: 200, mossDuration: 1700, vineStart: 1300, vineDuration: 3800 },
@@ -187,12 +188,18 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     document.documentElement.classList.add("is-hero-held");
     music?.start();
     window.scrollTo(0, hero.offsetTop);
+    window.addEventListener("wheel", blockHeroHold, { passive: false });
+    window.addEventListener("touchmove", blockHeroHold, { passive: false });
+    window.addEventListener("keydown", blockHeroKeys);
     window.setTimeout(() => {
       heroHeld = false;
       hero.classList.remove("is-holding");
       hero.classList.add("is-scroll-ready", "is-introduced");
       hero.querySelector(".hero__intro")?.removeAttribute("aria-hidden");
       document.documentElement.classList.remove("is-hero-held");
+      window.removeEventListener("wheel", blockHeroHold);
+      window.removeEventListener("touchmove", blockHeroHold);
+      window.removeEventListener("keydown", blockHeroKeys);
     }, 2600);
   };
 
@@ -259,24 +266,15 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     rahul.style.transform = `translate3d(0, ${rahulApart}px, 0) scale(${scale})`;
   };
 
-  const fullyOffscreen = () => {
-    const n = nidhi.getBoundingClientRect();
-    const r = rahul.getBoundingClientRect();
-    const nInkBottom = n.top + n.height * 0.95;
-    const rInkTop = r.top + r.height * 0.05;
-    return nInkBottom <= 0 && rInkTop >= window.innerHeight;
-  };
-
   const update = () => {
     if (!nidhiExit) measureExits();
 
-    const ganeshaGone = !ganesha || ganesha.getBoundingClientRect().bottom <= 1;
-    const venueTop = venue.getBoundingClientRect().top;
+    const ganeshaGone = !ganesha || window.scrollY + 1 >= ganesha.offsetTop + ganesha.offsetHeight;
+    const venueTop = venue.offsetTop - window.scrollY;
     const atVenue = venueTop < 8;
     if (ganeshaGone) startHeroHold();
 
     if (heroHeld) {
-      window.scrollTo(0, hero.offsetTop);
       hero.classList.toggle("is-short", true);
       hero.classList.toggle("is-pinned", true);
       apply(0);
@@ -294,7 +292,7 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
 
     const revealed = venue.classList.contains("is-revealed");
     const foil = revealed ? 1 : easeInOut(clamp01((progress - 0.48) / 0.36));
-    const out = ganeshaGone && (fullyOffscreen() || progress > 0.92);
+    const out = ganeshaGone && progress > 0.92;
     if (out && (revealed || foil > 0.96) && !atVenue && !settled) {
       settled = true;
       window.scrollTo(0, venue.offsetTop);
@@ -339,10 +337,9 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
   update();
   window.addEventListener("scroll", requestUpdate, { passive: true });
   window.addEventListener("resize", requestUpdate);
-  window.addEventListener("wheel", blockHeroHold, { passive: false });
-  window.addEventListener("touchmove", blockHeroHold, { passive: false });
-  window.addEventListener("keydown", blockHeroKeys);
 }
+
+lockViewport();
 
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);

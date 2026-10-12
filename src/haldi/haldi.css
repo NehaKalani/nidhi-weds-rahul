@@ -3,7 +3,7 @@
   --scale: 0.5;
   --offset-x: 0px;
   position: relative;
-  height: max(100svh, 560px);
+  height: max(var(--app-h), 560px);
   overflow: hidden;
   isolation: isolate;
   background: linear-gradient(180deg, #9ac2e3 0%, #bcd6e6 45%, #f6ecd8 75%);
@@ -95,10 +95,6 @@
   position: absolute;
   display: block;
   margin: 0;
-}
-
-.haldi__sway {
-  will-change: transform;
 }
 
 .haldi__title img {
