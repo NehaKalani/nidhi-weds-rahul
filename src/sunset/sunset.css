@@ -254,7 +254,7 @@
 
 .sunset__roll {
   left: 96px;
-  top: var(--hang, 0px);
+  top: calc(var(--hang, 0px) - 116px);
   z-index: 11;
   width: 590px;
   height: auto;

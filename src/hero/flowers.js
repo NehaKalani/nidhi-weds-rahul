@@ -135,7 +135,7 @@ export function createFlowers(container, manifest, basePath) {
       for (const { flower, index, wrap } of items) {
         const large = flower.area >= BUD_MIN_AREA;
         const along = dir > 0 ? flower.x / width : 1 - flower.x / width;
-        const whip = large ? 0.82 : 1.25;
+        const whip = large ? 0.1 : 0.2;
         const lean = (48 + seeded(index + 11) * 24) * whip;
         const drift = (32 + seeded(index + 19) * 28) * whip;
 
