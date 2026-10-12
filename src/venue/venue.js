@@ -38,9 +38,26 @@ function place(el, box) {
 }
 
 function frameArt(frame, art, layout) {
-  const scale = Math.max(frame.clientWidth / layout.width, frame.clientHeight / layout.height);
-  const x = (frame.clientWidth - layout.width * scale) / 2;
-  const y = (frame.clientHeight - layout.height * scale) / 2;
+  const width = frame.clientWidth;
+  const height = frame.clientHeight;
+  const krishna = layout.pieces?.krishna;
+  const radha = layout.pieces?.radha;
+  // The sleeves are inset on the gold plate. Cover with that span, not the
+  // plate, so both sleeves meet the screen edges on every aspect ratio.
+  const spanLeft = krishna ? krishna.x : 0;
+  const spanRight = radha ? radha.x + radha.w : layout.width;
+  const span = Math.max(spanRight - spanLeft, 1);
+  const scale = Math.max((width + 2) / span, height / layout.height);
+  const x = (width - span * scale) / 2 - spanLeft * scale;
+  let y = (height - layout.height * scale) / 2;
+  if (krishna && radha) {
+    const top = Math.min(krishna.y, radha.y);
+    const bottom = Math.max(krishna.y + krishna.h, radha.y + radha.h);
+    const blockTop = y + top * scale;
+    const blockH = (bottom - top) * scale;
+    if (blockTop < 0) y -= blockTop;
+    else if (blockTop + blockH > height) y -= blockTop + blockH - height;
+  }
   art.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
   return { scale, x, y };
 }
@@ -66,8 +83,15 @@ function drawGlowAt(ctx, mask, t) {
   if (t <= 0.001 || t >= 0.999) return;
 
   const cycle = (t * GLOW_PASSES) % 1;
-  ctx.globalCompositeOperation = "source-over";
   const y = -0.25 * h + cycle * 1.55 * h;
+  // The mask stays opaque to the bottom of the box. Let the sweep dissolve
+  // while it is still above that edge, then clear the lower box entirely.
+  const life = Math.min(Math.max((h * 0.62 - y) / (h * 0.42), 0), 1);
+  const strength = life * life * (3 - 2 * life);
+  if (strength <= 0.004) return;
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = strength;
   const glow = ctx.createRadialGradient(w * 0.5, y, 2, w * 0.5, y, h * 0.55);
   glow.addColorStop(0, "rgba(255, 248, 220, 1)");
   glow.addColorStop(0.22, "rgba(255, 210, 160, 0.95)");
@@ -75,8 +99,17 @@ function drawGlowAt(ctx, mask, t) {
   glow.addColorStop(1, "rgba(255, 200, 140, 0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
+  ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = "destination-in";
+  const falloff = ctx.createLinearGradient(0, h * 0.2, 0, h * 0.68);
+  falloff.addColorStop(0, "rgba(0, 0, 0, 1)");
+  falloff.addColorStop(0.45, "rgba(0, 0, 0, 0.7)");
+  falloff.addColorStop(0.78, "rgba(0, 0, 0, 0.16)");
+  falloff.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = falloff;
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(mask, 0, 0, w, h);
+  ctx.globalCompositeOperation = "source-over";
 }
 
 const CONFETTI_COLORS = ["#f3d59a", "#f4b8c5", "#fff6e4", "#c9a04a", "#e07a8a", "#9c2233", "#ffe7c2", "#d4a0c8", "#f6c56b"];
