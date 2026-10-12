@@ -1,3 +1,5 @@
+import { onScrollFrame } from "../lib/scroll.js";
+
 const BASE = "/venue";
 const GLOW_PASSES = 1;
 const CLEAR_AT = 0.14;
@@ -422,11 +424,7 @@ export async function initVenue(section) {
   };
 
   setProgress(ritualProgress());
-  window.addEventListener("scroll", requestRitual, { passive: true });
-  window.addEventListener("resize", () => {
-    measureRitual();
-    requestRitual();
-  });
+  onScrollFrame(requestRitual);
 
   const isScrollPast = (event) => {
     if (event.type === "wheel") return event.deltaY > 0;

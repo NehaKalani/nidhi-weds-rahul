@@ -14,7 +14,7 @@
   position: relative;
   z-index: 1;
   height: calc(var(--app-h) * 4);
-  min-height: 560px;
+  min-height: min(560px, var(--app-h));
   background:
     radial-gradient(70% 55% at 50% 42%, #6a1b2a 0%, #3a0a14 58%, #24060d 100%),
     #2a0810;
@@ -24,7 +24,7 @@
   position: sticky;
   top: 0;
   height: var(--app-h);
-  min-height: 560px;
+  min-height: min(560px, var(--app-h));
   overflow: hidden;
   isolation: isolate;
 }

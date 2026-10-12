@@ -3,7 +3,7 @@
   --scale: 0.5;
   --offset-x: 0px;
   position: relative;
-  height: max(var(--app-h), 560px);
+  height: var(--app-h);
   overflow: hidden;
   isolation: isolate;
   background: linear-gradient(180deg, #9ac2e3 0%, #bcd6e6 45%, #f6ecd8 75%);

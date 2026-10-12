@@ -55,9 +55,12 @@ export function initMaayra(section, sangeet) {
     rollSpan = Math.max(sangeet.offsetHeight - stage.offsetHeight, window.innerHeight * 0.9);
     sectionTop = section.offsetTop;
   };
-  measure();
 
+  let painted = "";
   const apply = () => {
+    // The hero and the venue change height after this section is created.
+    // Read the live position every frame so the roll matches what is on screen.
+    measure();
     const top = sangeetTop - window.scrollY;
     const raw = top >= 0 ? 0 : clamp01(-top / rollSpan);
     const pinned = sectionTop - window.scrollY <= 2;
@@ -72,11 +75,20 @@ export function initMaayra(section, sangeet) {
     }
     if (raw < 0.8) settled = false;
 
-    section.style.setProperty("--roll", (covering && !pinned ? roll : pinned ? 1 : roll).toFixed(4));
-    section.style.setProperty("--title", title.toFixed(4));
-    section.classList.toggle("is-rolling", covering && !down);
-    section.classList.toggle("is-draped", covering && down);
-    section.classList.toggle("is-revealed", title > 0.04 || pinned || down);
+    const rollValue = (covering && !pinned ? roll : pinned ? 1 : roll).toFixed(4);
+    const titleValue = title.toFixed(4);
+    const rolling = covering && !down;
+    const draped = covering && down;
+    const revealed = title > 0.04 || pinned || down;
+    const signature = `${rollValue}|${titleValue}|${rolling}|${draped}|${revealed}`;
+    if (signature === painted) return;
+    painted = signature;
+
+    section.style.setProperty("--roll", rollValue);
+    section.style.setProperty("--title", titleValue);
+    section.classList.toggle("is-rolling", rolling);
+    section.classList.toggle("is-draped", draped);
+    section.classList.toggle("is-revealed", revealed);
   };
 
   new ResizeObserver(() => {
