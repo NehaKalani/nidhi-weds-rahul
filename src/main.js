@@ -16,6 +16,8 @@ import { initMaayra } from "./maayra/maayra.js";
 import { initSunset } from "./sunset/sunset.js";
 import { initMusic } from "./music/music.js";
 import { lockViewport } from "./lib/viewport.js";
+import { onScrollFrame } from "./lib/scroll.js";
+import { preloadWhenNear } from "./lib/preload.js";
 
 const TIMELINE = {
   nidhi: { mossStart: 200, mossDuration: 1700, vineStart: 1300, vineDuration: 3800 },
@@ -144,6 +146,10 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
   }
 
   venue.classList.add("is-held");
+  // The shorter hero is the scroll the guest actually sees. Applying it while
+  // Ganesha still covers the screen keeps later sections from jumping up
+  // the moment the invitation opens.
+  hero.classList.add("is-short");
 
   const stage = hero.querySelector(".hero__stage");
   const veil = hero.querySelector(".hero__veil");
@@ -283,7 +289,7 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
       return;
     }
 
-    hero.classList.toggle("is-short", ganeshaGone);
+    hero.classList.add("is-short");
     hero.classList.toggle("is-pinned", ganeshaGone && venueTop > 0);
 
     const distance = Math.max(hero.offsetHeight - stage.offsetHeight, 1);
@@ -335,8 +341,7 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
   }).observe(hero.querySelector(".hero__title"));
 
   update();
-  window.addEventListener("scroll", requestUpdate, { passive: true });
-  window.addEventListener("resize", requestUpdate);
+  onScrollFrame(requestUpdate);
 }
 
 lockViewport();
@@ -355,8 +360,30 @@ const music = initMusic(
 initGanesha(ganeshaEl, music);
 const venueReady = initVenue(venueEl);
 bindHeroBridge(document.querySelector(".hero"), venueEl, venueReady, ganeshaEl, music);
-init();
-initHaldi(document.querySelector(".haldi"));
-initSangeet(document.querySelector(".sangeet"));
-initMaayra(document.querySelector(".maayra"), document.querySelector(".sangeet"));
-initSunset(document.querySelector(".sunset"));
+
+let heroStarted = false;
+const startHero = () => {
+  if (heroStarted) return;
+  heroStarted = true;
+  init();
+};
+
+let laterStarted = false;
+const startLaterScenes = () => {
+  if (laterStarted) return;
+  laterStarted = true;
+  initHaldi(document.querySelector(".haldi"));
+  initSangeet(document.querySelector(".sangeet"));
+  initMaayra(document.querySelector(".maayra"), document.querySelector(".sangeet"));
+  initSunset(document.querySelector(".sunset"));
+};
+
+document.querySelector(".ganesha__invite")?.addEventListener("click", startHero, { once: true });
+window.addEventListener("scroll", startLaterScenes, { passive: true, once: true });
+if ("requestIdleCallback" in window) requestIdleCallback(startHero, { timeout: 1400 });
+else window.setTimeout(startHero, 400);
+window.setTimeout(startLaterScenes, 2800);
+
+for (const id of ["haldi", "sangeet", "maayra", "sunset"]) {
+  preloadWhenNear(document.getElementById(id));
+}

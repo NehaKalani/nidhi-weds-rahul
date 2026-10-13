@@ -10,7 +10,7 @@ export function initMusic(ganesha, button, ganeshaAudio, heroAudio) {
 
   for (const el of [ganeshaAudio, heroAudio]) {
     el.loop = true;
-    el.preload = "auto";
+    el.preload = "none";
     el.muted = false;
     el.defaultMuted = false;
     el.volume = VOLUME;

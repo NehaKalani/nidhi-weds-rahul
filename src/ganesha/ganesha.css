@@ -30,7 +30,6 @@ html.is-ganesha-held body {
   z-index: 30;
   height: var(--app-h);
   min-height: var(--app-h);
-  touch-action: none;
   background: var(--ganesha-olive);
 }
 
@@ -43,7 +42,6 @@ html.is-ganesha-held body {
   justify-content: center;
   align-items: center;
   gap: clamp(0.7rem, 2.2vh, 1.15rem);
-  touch-action: none;
   padding:
     max(0.85rem, env(safe-area-inset-top))
     clamp(0.85rem, 3vw, 2rem)

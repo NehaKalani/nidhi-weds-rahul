@@ -1,3 +1,5 @@
+import { onScrollFrame } from "../lib/scroll.js";
+
 const BASE = "/venue";
 const GLOW_PASSES = 1;
 const CLEAR_AT = 0.14;
@@ -36,9 +38,26 @@ function place(el, box) {
 }
 
 function frameArt(frame, art, layout) {
-  const scale = Math.max(frame.clientWidth / layout.width, frame.clientHeight / layout.height);
-  const x = (frame.clientWidth - layout.width * scale) / 2;
-  const y = (frame.clientHeight - layout.height * scale) / 2;
+  const width = frame.clientWidth;
+  const height = frame.clientHeight;
+  const krishna = layout.pieces?.krishna;
+  const radha = layout.pieces?.radha;
+  // The sleeves are inset on the gold plate. Cover with that span, not the
+  // plate, so both sleeves meet the screen edges on every aspect ratio.
+  const spanLeft = krishna ? krishna.x : 0;
+  const spanRight = radha ? radha.x + radha.w : layout.width;
+  const span = Math.max(spanRight - spanLeft, 1);
+  const scale = Math.max((width + 2) / span, height / layout.height);
+  const x = (width - span * scale) / 2 - spanLeft * scale;
+  let y = (height - layout.height * scale) / 2;
+  if (krishna && radha) {
+    const top = Math.min(krishna.y, radha.y);
+    const bottom = Math.max(krishna.y + krishna.h, radha.y + radha.h);
+    const blockTop = y + top * scale;
+    const blockH = (bottom - top) * scale;
+    if (blockTop < 0) y -= blockTop;
+    else if (blockTop + blockH > height) y -= blockTop + blockH - height;
+  }
   art.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
   return { scale, x, y };
 }
@@ -64,8 +83,15 @@ function drawGlowAt(ctx, mask, t) {
   if (t <= 0.001 || t >= 0.999) return;
 
   const cycle = (t * GLOW_PASSES) % 1;
-  ctx.globalCompositeOperation = "source-over";
   const y = -0.25 * h + cycle * 1.55 * h;
+  // The mask stays opaque to the bottom of the box. Let the sweep dissolve
+  // while it is still above that edge, then clear the lower box entirely.
+  const life = Math.min(Math.max((h * 0.62 - y) / (h * 0.42), 0), 1);
+  const strength = life * life * (3 - 2 * life);
+  if (strength <= 0.004) return;
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = strength;
   const glow = ctx.createRadialGradient(w * 0.5, y, 2, w * 0.5, y, h * 0.55);
   glow.addColorStop(0, "rgba(255, 248, 220, 1)");
   glow.addColorStop(0.22, "rgba(255, 210, 160, 0.95)");
@@ -73,8 +99,17 @@ function drawGlowAt(ctx, mask, t) {
   glow.addColorStop(1, "rgba(255, 200, 140, 0)");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
+  ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = "destination-in";
+  const falloff = ctx.createLinearGradient(0, h * 0.2, 0, h * 0.68);
+  falloff.addColorStop(0, "rgba(0, 0, 0, 1)");
+  falloff.addColorStop(0.45, "rgba(0, 0, 0, 0.7)");
+  falloff.addColorStop(0.78, "rgba(0, 0, 0, 0.16)");
+  falloff.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = falloff;
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(mask, 0, 0, w, h);
+  ctx.globalCompositeOperation = "source-over";
 }
 
 const CONFETTI_COLORS = ["#f3d59a", "#f4b8c5", "#fff6e4", "#c9a04a", "#e07a8a", "#9c2233", "#ffe7c2", "#d4a0c8", "#f6c56b"];
@@ -409,6 +444,9 @@ export async function initVenue(section) {
     if (ritualFrame) return;
     ritualFrame = requestAnimationFrame(() => {
       ritualFrame = 0;
+      // The hero shortens once Ganesha leaves, which moves this section up.
+      // Measuring only at load left the ritual a screen behind the finger.
+      measureRitual();
       setProgress(ritualProgress());
     });
   };
@@ -419,11 +457,7 @@ export async function initVenue(section) {
   };
 
   setProgress(ritualProgress());
-  window.addEventListener("scroll", requestRitual, { passive: true });
-  window.addEventListener("resize", () => {
-    measureRitual();
-    requestRitual();
-  });
+  onScrollFrame(requestRitual);
 
   const isScrollPast = (event) => {
     if (event.type === "wheel") return event.deltaY > 0;
@@ -462,6 +496,7 @@ export async function initVenue(section) {
   let pinOn = false;
   const syncPin = () => {
     const need = (scratchReady && !revealed) || (revealed && !mayLeave);
+    section.classList.toggle("is-scroll-locked", need);
     if (need === pinOn) return;
     pinOn = need;
     if (need) {
@@ -478,6 +513,134 @@ export async function initVenue(section) {
   window.addEventListener("touchstart", (event) => {
     lastTouchY = event.touches?.[0]?.clientY ?? 0;
   }, { passive: true });
+
+  // iPhone leaves a touch on the fixed gold card (and, once the card is
+  // scratchable, on a surface with touch-action: none) so the page never
+  // moves. Own that gesture and scroll by the finger, the way a wheel does.
+  const iosTouch = /iPhone|iPad|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (iosTouch) {
+    section.style.touchAction = "none";
+    stage.style.touchAction = "none";
+    art.style.touchAction = "none";
+  }
+
+  let gesture = null;
+  let flingFrame = 0;
+  const cancelFling = () => {
+    if (!flingFrame) return;
+    cancelAnimationFrame(flingFrame);
+    flingFrame = 0;
+  };
+
+  const onTouchStart = (event) => {
+    cancelFling();
+    if (event.touches.length !== 1) {
+      gesture = null;
+      return;
+    }
+    const touch = event.touches[0];
+    lastTouchY = touch.clientY;
+    if (!(event.target instanceof Node) || !section.contains(event.target)) {
+      gesture = null;
+      return;
+    }
+    gesture = {
+      id: touch.identifier,
+      startY: touch.clientY,
+      y: touch.clientY,
+      scroll: window.scrollY,
+      owned: iosTouch,
+      seen: false,
+      t: performance.now(),
+      v: 0,
+    };
+  };
+
+  const onTouchMove = (event) => {
+    if (!gesture) return;
+    const touch = [...event.touches].find((entry) => entry.identifier === gesture.id);
+    if (!touch) return;
+
+    const now = performance.now();
+    const step = gesture.y - touch.clientY;
+    const dt = Math.max(now - gesture.t, 1);
+    gesture.y = touch.clientY;
+    gesture.t = now;
+    if (dt < 100) gesture.v = gesture.v * 0.5 + (step / dt) * 0.5;
+    const dy = gesture.startY - touch.clientY;
+    const scratching = scratchReady && !revealed && event.target === scratch;
+
+    if (scratching) return;
+
+    if (revealed && !mayLeave) {
+      if (event.cancelable) event.preventDefault();
+      return;
+    }
+
+    if (scratchReady && !revealed) {
+      if (event.cancelable) event.preventDefault();
+      if (step > 1) shakeScratch();
+      else if (step < -1) window.scrollBy(0, step);
+      return;
+    }
+
+    if (!gesture.owned) {
+      if (!gesture.seen) {
+        gesture.seen = true;
+        return;
+      }
+      if (Math.abs(window.scrollY - gesture.scroll) > 6) {
+        gesture = null;
+        return;
+      }
+      if (Math.abs(dy) < 24) return;
+      gesture.owned = true;
+    }
+
+    if (event.cancelable) event.preventDefault();
+    // The hero snaps onto the venue as you arrive. Keep that jump, then
+    // continue from it instead of pulling the page back to the finger's start.
+    if (dy > 0 && window.scrollY > gesture.scroll + dy + 2) {
+      gesture.scroll = window.scrollY - dy;
+    }
+    window.scrollTo(0, gesture.scroll + dy);
+  };
+
+  const onTouchEnd = (event) => {
+    if (!gesture) return;
+    const ended = [...event.changedTouches].some((entry) => entry.identifier === gesture.id);
+    if (!ended) return;
+    const speed = gesture.v;
+    const owned = gesture.owned;
+    gesture = null;
+    if (!owned || event.type === "touchcancel") return;
+    if (Math.abs(speed) < 0.05) return;
+    if ((scratchReady && !revealed) || (revealed && !mayLeave)) return;
+
+    let velocity = Math.max(-64, Math.min(64, speed * 16));
+    const step = () => {
+      velocity *= 0.94;
+      if (Math.abs(velocity) < 0.45) {
+        flingFrame = 0;
+        return;
+      }
+      if ((scratchReady && !revealed && velocity > 0) || (revealed && !mayLeave)) {
+        flingFrame = 0;
+        return;
+      }
+      window.scrollBy(0, velocity);
+      flingFrame = requestAnimationFrame(step);
+    };
+    flingFrame = requestAnimationFrame(step);
+  };
+
+  const listenOn = iosTouch ? window : section;
+  const capture = iosTouch;
+  listenOn.addEventListener("touchstart", onTouchStart, { passive: true, capture });
+  listenOn.addEventListener("touchmove", onTouchMove, { passive: false, capture });
+  listenOn.addEventListener("touchend", onTouchEnd, { passive: true, capture });
+  listenOn.addEventListener("touchcancel", onTouchEnd, { passive: true, capture });
 
   return {
     setProgress,

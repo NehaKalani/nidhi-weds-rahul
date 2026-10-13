@@ -3,7 +3,7 @@
   --title: 0;
   position: relative;
   height: var(--app-h);
-  min-height: 560px;
+  min-height: min(560px, var(--app-h));
   overflow: hidden;
   isolation: isolate;
   background: #c43b42;

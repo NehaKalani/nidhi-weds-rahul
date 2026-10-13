@@ -188,10 +188,9 @@ export async function initHaldi(section) {
     const h = section.clientHeight;
     const frameW = FRAME.x1 - FRAME.x0;
     // Sky under the lettering has to stay large enough for the date and theme.
-    // A wider window must not grow the painting into that sky, so the scale
-    // follows the lower scene, not the width.
     const textBand = Math.min(Math.max(h * 0.3, 156), 230);
-    const titleBottom = 145 - LETTERING_LIFT + 405;
+    const titleTop = 145 - LETTERING_LIFT;
+    const titleBottom = titleTop + 405;
     const openSky = HORIZON_Y - titleBottom;
     const gapFactor = 1 - LETTERING_DROP;
     const skyScale = (h * 0.58) / (painting.h - HORIZON_Y);
@@ -207,11 +206,36 @@ export async function initHaldi(section) {
       gap = gapFor(scale);
       scale = Math.min(scale, h / (painting.h + gap));
     }
+    // The fit above can leave the painting narrower than the screen.
+    // Grow toward a width cover, and stop once the date would land on the couple.
+    const cover = (w + 2) / painting.w;
+    if (scale < cover) {
+      const textFits = (s, nextGap) => {
+        const titleY = titleTop + nextGap * LETTERING_DROP;
+        const titleScreen = h - (painting.h + nextGap - titleY) * s;
+        if (titleScreen < 12) return false;
+        // 250px is the date block in painting space; 896px is the couple, measured up from the bottom.
+        const detailsBottom = titleScreen + (405 + 250) * s + 36;
+        return detailsBottom <= h - 896 * s + 4;
+      };
+      let next = cover;
+      for (let i = 0; i < 24 && next > scale; i += 1) {
+        const room = (h - 36) / next - (painting.h - titleTop);
+        const cap = room > 0 ? Math.floor(room / gapFactor / tileH) * tileH : 0;
+        const nextGap = Math.min(gapFor(next), cap);
+        if (textFits(next, nextGap)) {
+          scale = next;
+          gap = nextGap;
+          break;
+        }
+        next *= 0.97;
+      }
+    }
     const offsetX = w / 2 - ((FRAME.x0 + FRAME.x1) / 2) * scale;
     section.style.setProperty("--gap", `${gap}px`);
     section.style.setProperty("--scale", `${scale}`);
     section.style.setProperty("--offset-x", `${offsetX}px`);
-    section.classList.toggle("is-wide", offsetX > 0);
+    section.classList.toggle("is-wide", offsetX > 2);
     Object.assign(view, { w, h, scale, horizon: h - (painting.h - HORIZON_Y) * scale });
 
     if (sky) {

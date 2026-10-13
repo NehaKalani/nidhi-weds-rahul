@@ -63,13 +63,12 @@ export function initSunset(section) {
     anchor = section.offsetTop;
     extra = Math.max(section.offsetHeight - stage.offsetHeight, 1);
   };
-  measure();
-  new ResizeObserver(() => {
-    measure();
-    apply();
-  }).observe(section);
 
+  let painted = "";
   const apply = () => {
+    // Sections above this one shrink after load. A saved offset leaves the
+    // courtyard on its first frame for the whole sticky scroll.
+    measure();
     const top = anchor - window.scrollY;
     const golden = clamp01(1 - top / appHeight());
     const travel = clamp01(-top / extra);
@@ -84,6 +83,10 @@ export function initSunset(section) {
     const ground = span(dusk, 0.7, 0.94);
     const veil = dusk < 0.62 ? smoothstep(dusk / 0.62) : 1 - smoothstep((dusk - 0.62) / 0.38);
 
+    const next = [golden, unroll, sky, lights, ground, veil].map((value) => value.toFixed(4)).join("|");
+    if (next === painted) return;
+    painted = next;
+
     section.style.setProperty("--golden", golden.toFixed(4));
     section.style.setProperty("--unroll", unroll.toFixed(4));
     section.style.setProperty("--sky", sky.toFixed(4));
@@ -92,5 +95,6 @@ export function initSunset(section) {
     section.style.setProperty("--veil", veil.toFixed(4));
   };
 
+  new ResizeObserver(apply).observe(section);
   onScrollFrame(apply);
 }
