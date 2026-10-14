@@ -1,7 +1,6 @@
 import { onScrollFrame } from "../lib/scroll.js";
 
 const BASE = "/venue";
-const GLOW_PASSES = 1;
 const CLEAR_AT = 0.14;
 const BRUSH = 64;
 const REVEAL_STROKES = 5;
@@ -75,41 +74,6 @@ function edgeMoves(frame, layout, placed, hintWidth) {
     krishna: { x: (mid - half - x) / scale - (krishna.x + krishna.w), y: 16 },
     radhaSide: { x: (mid + half - x) / scale - radha.x, y: 20 },
   };
-}
-
-function drawGlowAt(ctx, mask, t) {
-  const { width: w, height: h } = ctx.canvas;
-  ctx.clearRect(0, 0, w, h);
-  if (t <= 0.001 || t >= 0.999) return;
-
-  const cycle = (t * GLOW_PASSES) % 1;
-  const y = -0.25 * h + cycle * 1.55 * h;
-  // The mask stays opaque to the bottom of the box. Let the sweep dissolve
-  // while it is still above that edge, then clear the lower box entirely.
-  const life = Math.min(Math.max((h * 0.62 - y) / (h * 0.42), 0), 1);
-  const strength = life * life * (3 - 2 * life);
-  if (strength <= 0.004) return;
-
-  ctx.globalCompositeOperation = "source-over";
-  ctx.globalAlpha = strength;
-  const glow = ctx.createRadialGradient(w * 0.5, y, 2, w * 0.5, y, h * 0.55);
-  glow.addColorStop(0, "rgba(255, 248, 220, 1)");
-  glow.addColorStop(0.22, "rgba(255, 210, 160, 0.95)");
-  glow.addColorStop(0.5, "rgba(255, 168, 176, 0.55)");
-  glow.addColorStop(1, "rgba(255, 200, 140, 0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, w, h);
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = "destination-in";
-  const falloff = ctx.createLinearGradient(0, h * 0.2, 0, h * 0.68);
-  falloff.addColorStop(0, "rgba(0, 0, 0, 1)");
-  falloff.addColorStop(0.45, "rgba(0, 0, 0, 0.7)");
-  falloff.addColorStop(0.78, "rgba(0, 0, 0, 0.16)");
-  falloff.addColorStop(1, "rgba(0, 0, 0, 0)");
-  ctx.fillStyle = falloff;
-  ctx.fillRect(0, 0, w, h);
-  ctx.drawImage(mask, 0, 0, w, h);
-  ctx.globalCompositeOperation = "source-over";
 }
 
 const CONFETTI_COLORS = ["#f3d59a", "#f4b8c5", "#fff6e4", "#c9a04a", "#e07a8a", "#9c2233", "#ffe7c2", "#d4a0c8", "#f6c56b"];
@@ -243,10 +207,9 @@ export async function initVenue(section) {
     }
   }
 
-  const [layout, gold, lotusGlow] = await Promise.all([
+  const [layout, gold] = await Promise.all([
     fetch(`${BASE}/layout.json`).then((r) => r.json()),
     loadImage(`${BASE}/gold.webp`),
-    loadImage(`${BASE}/lotus-glow.webp`),
   ]);
 
   const boxes = layout.pieces;
@@ -286,7 +249,6 @@ export async function initVenue(section) {
   let pinY = 0;
   let settleTimer = 0;
   let shaking = false;
-  let glowOnce = 0;
   let lastTouchY = 0;
 
   const waitForRest = () => {
@@ -394,7 +356,6 @@ export async function initVenue(section) {
     return { arrive() {}, leave() {}, setProgress() {} };
   }
 
-  const glowCtx = glowCanvas.getContext("2d");
   let lastProgress = -1;
   let ritualFrame = 0;
   let sectionTop = 0;
@@ -416,9 +377,9 @@ export async function initVenue(section) {
     if (Math.abs(p - lastProgress) < 0.001) return;
     lastProgress = p;
 
-    const glow = Math.max(glowOnce, windowProgress(p, 0.1, 0.32));
-    glowOnce = glow;
-    const part = easeOutCubic(windowProgress(p, 0.38, 0.58));
+    // The glow used to fill the first part of this scroll. The hands open
+    // with the scroll that arrives on the venue.
+    const part = easeOutCubic(windowProgress(p, 0.04, 0.62));
 
     for (const [name, el] of Object.entries(movers)) {
       if (!el) continue;
@@ -426,9 +387,6 @@ export async function initVenue(section) {
       el.style.opacity = "1";
       el.style.transform = to ? `translate(${to.x * part}px, ${to.y * part}px)` : "";
     }
-    section.classList.toggle("is-glowing", glow > 0 && glow < 1);
-    drawGlowAt(glowCtx, lotusGlow, glow);
-
     const parted = part >= 0.82;
     if (parted && !scratchReady) {
       scratchReady = true;

@@ -1,7 +1,7 @@
 .regards {
   position: relative;
   z-index: 6;
-  height: calc(var(--app-h) * 2.6);
+  height: calc(var(--app-h) * 3.4);
   background: #f4ead8 url("/regards/pattern.jpg") center / cover no-repeat;
   color: #f7f1e4;
 }
@@ -22,22 +22,54 @@
 
 .regards__panel {
   position: relative;
+  display: grid;
   width: min(68rem, 100%);
   background: #556338;
 }
 
 .regards__sheet {
+  grid-area: 1 / 1;
   padding: clamp(1.15rem, 2.8vh, 2rem) clamp(1rem, 2.4vw, 2rem);
   opacity: 1;
   transition: opacity 0.45s ease;
 }
 
-.regards__sheet--next {
-  position: absolute;
-  inset: 0;
+.regards__sheet--first,
+.regards__sheet--more,
+.regards__sheet--close {
   opacity: 0;
+  pointer-events: none;
+}
+
+.regards__sheet--first {
+  opacity: 1;
+}
+
+.regards__sheet--close {
   display: grid;
   place-items: center;
+}
+
+.regards[data-step="0"] .regards__sheet--first {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+  transition-delay: 0.5s;
+}
+
+.regards[data-step="1"] .regards__sheet--first,
+.regards[data-step="2"] .regards__sheet--first,
+.regards[data-step="2"] .regards__sheet--more {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.regards[data-step="1"] .regards__sheet--more,
+.regards[data-step="2"] .regards__sheet--close {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+  transition-delay: 0.5s;
 }
 
 .regards__close {
@@ -57,12 +89,27 @@
 }
 
 .regards__map {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
   font-family: Cinzel, "Times New Roman", serif;
   font-size: clamp(0.78rem, 1.8vw, 0.95rem);
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #f3e7cf;
+  text-decoration: none;
+}
+
+.regards__map-pin {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 1.35em;
+  line-height: 1;
+}
+
+.regards__map span:last-child {
   text-decoration: underline;
   text-underline-offset: 0.35em;
   text-decoration-thickness: 1px;
@@ -71,20 +118,6 @@
 .regards__map:hover,
 .regards__map:focus-visible {
   color: #fffaf2;
-}
-
-.regards.is-next .regards__sheet:not(.regards__sheet--next) {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
-.regards.is-next .regards__sheet--next {
-  opacity: 1;
-  transition-delay: 0.5s;
-}
-
-.regards:not(.is-next) .regards__sheet:not(.regards__sheet--next) {
-  transition-delay: 0.5s;
 }
 
 .regards__stage {
@@ -147,6 +180,10 @@
   font-weight: 600;
 }
 
+.regards__woman {
+  white-space: nowrap;
+}
+
 .regards__names em {
   font-style: italic;
   font-weight: 500;
@@ -163,6 +200,42 @@
   .regards__names {
     row-gap: 0.32rem;
   }
+
+  .regards__sheet--more {
+    padding: 0.75rem 0.85rem 0.55rem;
+  }
+
+  .regards__sheet--more .regards__stage {
+    gap: 0.7rem;
+  }
+
+  .regards__sheet--more .regards__lead {
+    font-size: 1.5rem;
+  }
+
+  .regards__sheet--more .regards__house {
+    margin: 0.06rem 0 0.32rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+  }
+
+  .regards__sheet--more .regards__names {
+    column-gap: 0.55rem;
+    row-gap: 0.18rem;
+  }
+
+  .regards__sheet--more .regards__names span,
+  .regards__sheet--more .regards__names em {
+    line-height: 1.15;
+  }
+
+  .regards__sheet--more .regards__names span {
+    font-size: 1.02rem;
+  }
+
+  .regards__sheet--more .regards__names em {
+    font-size: 0.74rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -177,13 +250,18 @@
     min-height: var(--app-h);
   }
 
-  .regards__sheet {
+  .regards[data-step] .regards__sheet--first,
+  .regards[data-step] .regards__sheet--more,
+  .regards[data-step] .regards__sheet--close {
+    position: relative;
+    grid-area: auto;
+    inset: auto;
+    opacity: 1;
+    pointer-events: auto;
     transition: none;
   }
 
-  .regards__sheet--next {
-    position: relative;
-    opacity: 1;
+  .regards__sheet--close {
     min-height: 16rem;
   }
 }
