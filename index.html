@@ -73,23 +73,25 @@
         <div class="hero__stage">
           <div class="hero__veil" aria-hidden="true"></div>
           <div class="hero__intro" aria-hidden="true">
-            <img
-              class="hero__intro-deity"
-              src="/hero/srinathji.png"
-              alt=""
-              width="330"
-              height="442"
-            />
-            <p class="hero__intro-kicker">WITH THE BLESSINGS OF</p>
-            <p class="hero__intro-names">
-              <span>Sri Mohan Lal ji Kalani</span>
-              <span>Sri Jugal Kishor ji Kalani</span>
-              <span>Sri Damodar Das ji Kalani</span>
-              <span>Sri Rampal ji Kalani</span>
-              <span>Sri Dau Dayal ji Kalani</span>
-            </p>
-            <p class="hero__intro-family">and the entire Kalani family</p>
-            <p class="hero__intro-invite">We cordially invite you to the wedding of</p>
+            <div class="hero__intro-fit">
+              <img
+                class="hero__intro-deity"
+                src="/hero/srinathji.png"
+                alt=""
+                width="330"
+                height="442"
+              />
+              <p class="hero__intro-kicker">WITH THE BLESSINGS OF</p>
+              <p class="hero__intro-names">
+                <span>Sri Mohan Lal ji Kalani</span>
+                <span>Sri Jugal Kishor ji Kalani</span>
+                <span>Sri Damodar Das ji Kalani</span>
+                <span>Sri Rampal ji Kalani</span>
+                <span>Sri Dau Dayal ji Kalani</span>
+              </p>
+              <p class="hero__intro-family">and the entire Kalani family</p>
+              <p class="hero__intro-invite">We cordially invite you to the wedding of</p>
+            </div>
           </div>
           <h1 id="hero-title" class="hero__title" aria-label="Nidhi weds Rahul">
             <span class="name-row" data-row="nidhi" aria-hidden="true"></span>
@@ -103,7 +105,8 @@
           <p class="hero__cue" aria-hidden="true">
             <span class="hero__cue-hold">hold on</span>
             <span class="hero__cue-scroll">
-              scroll down
+              <span class="when-scroll">scroll down</span>
+              <span class="when-swipe">swipe down</span>
               <span class="hero__cue-arrow"></span>
             </span>
           </p>
@@ -143,7 +146,10 @@
               <canvas class="venue__glow" aria-hidden="true"></canvas>
             </div>
           </div>
-          <p class="venue__scroll-cue">keep scrolling</p>
+          <p class="venue__scroll-cue">
+            <span class="when-scroll">keep scrolling</span>
+            <span class="when-swipe">keep swiping</span>
+          </p>
           <p class="venue__hint"><i>Scratch</i> <i>to</i> <i>reveal</i></p>
           <h2 id="venue-title" class="venue__title">Rang Mahal, Pushkar · 30th and 31st January, 2027</h2>
         </div>
@@ -285,7 +291,63 @@
             <div class="sunset__day" aria-hidden="true"></div>
             <div class="sunset__dusk" aria-hidden="true"></div>
             <img loading="lazy" decoding="async" class="sunset__banner" src="/sunset/scroll_unrolled.svg" alt="" width="290" height="483" />
+            <div class="sunset__copy">
+              <div class="sunset__rite sunset__rite--day">
+                <p class="sunset__rite-name">Sundowner Varmaala</p>
+                <p>31st January, 2027</p>
+                <p>Lawn - A, 5:00pm</p>
+              </div>
+              <div class="sunset__rite sunset__rite--night" aria-hidden="true">
+                <p class="sunset__rite-name" lang="hi">पाणिग्रहण<br />संस्कार</p>
+                <p>31st January, 2027</p>
+                <p>Lawn - A, 8:00pm onwards</p>
+              </div>
+            </div>
             <img loading="lazy" decoding="async" class="sunset__roll" src="/sunset/scroll_rolled.svg" alt="" width="215" height="137" />
+          </div>
+        </div>
+      </section>
+
+      <section class="regards" id="regards" aria-label="Blessings, regards">
+        <div class="regards__pin">
+          <div class="regards__panel">
+            <div class="regards__sheet">
+              <div class="regards__stage">
+                <div class="regards__family">
+                  <h2 class="regards__lead" id="regards-kalani">Blessings, regards</h2>
+                  <p class="regards__house">Kalani Parivaar</p>
+                  <ul class="regards__names">
+                    <li><span>Late. Sri Balkishan Ji Kalani, Late. Smt Shakuntala Devi Kalani</span><em>(dada-dadi)</em></li>
+                    <li><span>Sri Naresh Kumar Kalani, Smt. Vinita Kalani</span><em>(parents)</em></li>
+                    <li><span>Late Sri Mahesh Kalani, Smt. Sumitra Kalani</span><em>(chacha - chachi)</em></li>
+                    <li><span>Sri Sanjay Kalani, Smt. Dipika Kalani</span><em>(chacha-chachi)</em></li>
+                    <li><span>Neha, Pratyay</span><em>(didi - jiju)</em></li>
+                    <li><span>Yash, Rishav, Google</span><em>(bhai)</em></li>
+                  </ul>
+                </div>
+                <div class="regards__family">
+                  <h2 class="regards__lead">Blessings, regards</h2>
+                  <p class="regards__house">Tela Parivaar</p>
+                  <ul class="regards__names">
+                    <li><span>Late. Sri Satyanarayan ji Tela, Smt. Shakuntala Devi Tela</span><em>(nana-nani)</em></li>
+                    <li><span>Sri Mandeep Maheshwari, Smt. Premlata Maheshwari</span><em>(mama-mami)</em></li>
+                    <li><span>Sri Dinesh Maheshwari, Smt. Sanitha Maheshwari</span><em>(masi-masaji)</em></li>
+                    <li><span>Sumiran, Tanisha, Darsh</span><em>(bhai-behen)</em></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="regards__sheet regards__sheet--next" aria-hidden="true">
+              <div class="regards__close">
+                <h2 class="regards__waiting" id="regards-waiting">Waiting for you</h2>
+                <a
+                  class="regards__map"
+                  href="https://maps.app.goo.gl/GU8RfZvnWhBDS7786"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >Rang Mahal, Pushkar</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

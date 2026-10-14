@@ -1,0 +1,205 @@
+.regards {
+  position: relative;
+  z-index: 6;
+  height: calc(var(--app-h) * 2.6);
+  background: #f4ead8 url("/regards/pattern.jpg") center / cover no-repeat;
+  color: #f7f1e4;
+}
+
+.regards__pin {
+  position: sticky;
+  top: 0;
+  height: var(--app-h);
+  display: grid;
+  place-items: center;
+  padding:
+    max(1.15rem, env(safe-area-inset-top))
+    max(0.9rem, env(safe-area-inset-right))
+    max(1.15rem, env(safe-area-inset-bottom))
+    max(0.9rem, env(safe-area-inset-left));
+  background: #f4ead8 url("/regards/pattern.jpg") center / cover no-repeat;
+}
+
+.regards__panel {
+  position: relative;
+  width: min(68rem, 100%);
+  background: #556338;
+}
+
+.regards__sheet {
+  padding: clamp(1.15rem, 2.8vh, 2rem) clamp(1rem, 2.4vw, 2rem);
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+
+.regards__sheet--next {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  display: grid;
+  place-items: center;
+}
+
+.regards__close {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.regards__waiting {
+  margin: 0;
+  font-family: "Pinyon Script", "Snell Roundhand", cursive;
+  font-size: clamp(2.6rem, 8vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: #f7f1e4;
+}
+
+.regards__map {
+  font-family: Cinzel, "Times New Roman", serif;
+  font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f3e7cf;
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 1px;
+}
+
+.regards__map:hover,
+.regards__map:focus-visible {
+  color: #fffaf2;
+}
+
+.regards.is-next .regards__sheet:not(.regards__sheet--next) {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.regards.is-next .regards__sheet--next {
+  opacity: 1;
+  transition-delay: 0.5s;
+}
+
+.regards:not(.is-next) .regards__sheet:not(.regards__sheet--next) {
+  transition-delay: 0.5s;
+}
+
+.regards__stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: grid;
+  gap: clamp(1.15rem, 3.4vh, 2.2rem);
+}
+
+.regards__family {
+  text-align: left;
+}
+
+.regards__lead {
+  margin: 0;
+  font-family: "Pinyon Script", "Snell Roundhand", cursive;
+  font-size: clamp(1.7rem, 4.6vw, 2.7rem);
+  font-weight: 400;
+  line-height: 1;
+  color: #f7f1e4;
+}
+
+.regards__house {
+  margin: 0.15rem 0 0.7rem;
+  font-family: Cinzel, "Times New Roman", serif;
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #f3e7cf;
+}
+
+.regards__names {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1rem;
+  row-gap: 0.7rem;
+  align-items: baseline;
+  text-align: left;
+}
+
+.regards__names li {
+  display: contents;
+}
+
+.regards__names span,
+.regards__names em {
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  line-height: 1.25;
+  text-align: left;
+  font-synthesis: none;
+}
+
+.regards__names span {
+  font-size: clamp(1.12rem, 3.4vw, 1.45rem);
+  font-weight: 600;
+}
+
+.regards__names em {
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(0.82rem, 2.3vw, 0.98rem);
+  white-space: nowrap;
+  color: #f6edd8;
+}
+
+@media (max-width: 859px) {
+  .regards__pin {
+    padding-bottom: max(5.5rem, calc(0.9rem + env(safe-area-inset-bottom)));
+  }
+
+  .regards__names {
+    row-gap: 0.32rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .regards {
+    height: auto;
+    min-height: var(--app-h);
+  }
+
+  .regards__pin {
+    position: relative;
+    height: auto;
+    min-height: var(--app-h);
+  }
+
+  .regards__sheet {
+    transition: none;
+  }
+
+  .regards__sheet--next {
+    position: relative;
+    opacity: 1;
+    min-height: 16rem;
+  }
+}
+
+@media (min-width: 860px) {
+  .regards__stage {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    column-gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  .regards__names span {
+    font-size: clamp(1.15rem, 1.25vw, 1.4rem);
+  }
+
+  .regards__names em {
+    font-size: clamp(0.85rem, 0.95vw, 1rem);
+  }
+}

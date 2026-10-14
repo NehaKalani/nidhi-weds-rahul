@@ -51,6 +51,12 @@ export function initGanesha(section, music) {
     held = false;
     release();
     root.classList.remove("is-ganesha-held");
+    section.classList.add("is-opened");
+    section.classList.remove("is-inviting");
+    if (invite) {
+      invite.inert = true;
+      invite.setAttribute("aria-hidden", "true");
+    }
     music?.invite();
     const top = hero ? hero.offsetTop : section.offsetTop + section.offsetHeight;
     window.scrollTo(0, top);

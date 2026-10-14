@@ -1,3 +1,11 @@
+@font-face {
+  font-family: Shivaraja;
+  src: url("/fonts/shivaraja/Shivaraja.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .sunset {
   --golden: 0;
   --unroll: 0;
@@ -5,6 +13,7 @@
   --lights: 0;
   --ground: 0;
   --veil: 0;
+  --rite: 0;
   position: relative;
   height: calc(var(--app-h) * 4.2);
   background: #140e12;
@@ -40,7 +49,8 @@
 .sunset__day,
 .sunset__dusk,
 .sunset__banner,
-.sunset__roll {
+.sunset__roll,
+.sunset__copy {
   position: absolute;
   display: block;
   pointer-events: none;
@@ -252,12 +262,86 @@
   clip-path: inset(0 0 calc((1 - var(--unroll)) * 100%) 0);
 }
 
+/* Same cloth as the banner, so the invitation unrolls with it. */
+.sunset__copy {
+  left: 96px;
+  top: var(--hang, 0px);
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 590px;
+  height: calc(590px * 483 / 290);
+  padding: 20% 13.5% 24%;
+  clip-path: inset(0 0 calc((1 - var(--unroll)) * 100%) 0);
+  color: #5c2618;
+  text-align: center;
+}
+
+.sunset__rite {
+  grid-area: 1 / 1;
+  width: 100%;
+  margin: 0;
+}
+
+.sunset__rite p {
+  margin: 0;
+  font-family: "Instrument Serif", Palatino, Georgia, serif;
+  font-size: 34px;
+  line-height: 1.35;
+}
+
+.sunset__rite .sunset__rite-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  margin: 0 0 12px;
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  font-synthesis: none;
+}
+
+.sunset__rite--day .sunset__rite-name {
+  font-family: Shivaraja, "Cormorant Garamond", Palatino, Georgia, serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 54px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.sunset__rite--night .sunset__rite-name {
+  font-family: Amita, "Kohinoor Devanagari", "Noto Serif Devanagari", serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+/* One invitation leaves before the next arrives, so the lines never cross. */
+.sunset__rite--day {
+  opacity: clamp(0, calc(1 - var(--rite) * 2), 1);
+}
+
+.sunset__rite--night {
+  opacity: clamp(0, calc(var(--rite) * 2 - 1), 1);
+}
+
+/* Same width as the open banner. Flattened so the closed roll is thinner. */
 .sunset__roll {
   left: 96px;
-  top: calc(var(--hang, 0px) - 116px);
+  top: calc(var(--hang, 0px) - 52px);
   z-index: 11;
   width: 590px;
   height: auto;
+  transform: scaleY(0.62);
+  transform-origin: 50% 46%;
   opacity: calc(1 - min(1, var(--unroll) * 2.4));
 }
 
@@ -269,7 +353,21 @@
     --lights: 0;
     --ground: 0;
     --veil: 0;
+    --rite: 0;
     height: var(--app-h);
+  }
+
+  .sunset__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 36px;
+  }
+
+  .sunset__rite--day,
+  .sunset__rite--night {
+    grid-area: auto;
+    opacity: 1;
   }
 
   .sunset__stage {

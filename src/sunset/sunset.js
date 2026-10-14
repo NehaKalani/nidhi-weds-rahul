@@ -28,6 +28,8 @@ export function initSunset(section) {
   if (!section) return;
   const stage = section.querySelector(".sunset__stage");
   const art = section.querySelector(".sunset__art");
+  const dayRite = section.querySelector(".sunset__rite--day");
+  const nightRite = section.querySelector(".sunset__rite--night");
 
   const layout = () => {
     const w = stage.clientWidth;
@@ -54,6 +56,8 @@ export function initSunset(section) {
     section.style.setProperty("--lights", "0");
     section.style.setProperty("--ground", "0");
     section.style.setProperty("--veil", "0");
+    section.style.setProperty("--rite", "0");
+    nightRite?.removeAttribute("aria-hidden");
     return;
   }
 
@@ -82,8 +86,11 @@ export function initSunset(section) {
     const lights = span(dusk, 0.34, 0.86);
     const ground = span(dusk, 0.7, 0.94);
     const veil = dusk < 0.62 ? smoothstep(dusk / 0.62) : 1 - smoothstep((dusk - 0.62) / 0.38);
+    // Sundowner stays through golden hour. It leaves, then the wedding
+    // rites arrive, as the sunset sky gives way to night.
+    const rite = span(dusk, 0.52, 0.68);
 
-    const next = [golden, unroll, sky, lights, ground, veil].map((value) => value.toFixed(4)).join("|");
+    const next = [golden, unroll, sky, lights, ground, veil, rite].map((value) => value.toFixed(4)).join("|");
     if (next === painted) return;
     painted = next;
 
@@ -93,6 +100,11 @@ export function initSunset(section) {
     section.style.setProperty("--lights", lights.toFixed(4));
     section.style.setProperty("--ground", ground.toFixed(4));
     section.style.setProperty("--veil", veil.toFixed(4));
+    section.style.setProperty("--rite", rite.toFixed(4));
+
+    const nightOn = rite >= 0.5;
+    dayRite?.setAttribute("aria-hidden", nightOn ? "true" : "false");
+    nightRite?.setAttribute("aria-hidden", nightOn ? "false" : "true");
   };
 
   new ResizeObserver(apply).observe(section);

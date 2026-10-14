@@ -75,11 +75,14 @@ html.is-ganesha-held body {
 }
 
 .ganesha__figure {
-  flex: none;
+  flex: 0 1 auto;
+  min-height: 0;
   height: auto;
   width: auto;
   max-width: min(86vw, 460px);
-  max-height: min(calc(var(--app-h) * 0.58), 500px);
+  /* The last term keeps the shloka and the invitation button on screen
+     when the phone is on its side and this block is wider than 720px. */
+  max-height: min(calc(var(--app-h) * 0.58), 500px, calc(var(--app-h) - 15.75rem));
   object-fit: contain;
   filter: drop-shadow(0 20px 26px rgba(32, 38, 12, 0.22));
   user-select: none;
@@ -159,6 +162,10 @@ html.is-ganesha-held body {
 .ganesha__invite:focus-visible {
   outline: 1px solid rgba(255, 250, 242, 0.75);
   outline-offset: 8px;
+}
+
+.ganesha.is-opened .ganesha__invite {
+  display: none;
 }
 
 @media (max-width: 720px) {

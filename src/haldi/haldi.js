@@ -76,11 +76,39 @@ function buildArt(art, layout) {
     swaying.push({ el, ...SWAY[piece.name], phase: swaying.length * 1.9 });
   }
 
-  const { x, y, w } = layout.lettering;
-  title.style.left = `${x}px`;
-  title.style.top = `calc(${y - LETTERING_LIFT}px + var(--gap) * ${LETTERING_DROP})`;
-  title.style.width = `${w}px`;
   return swaying;
+}
+
+// Wider windows scale the painting up until the lettering meets the garlands.
+// Pull the title, date, and venue back in, and lift them into the open sky.
+function typeFit(width) {
+  const widen = Math.min(Math.max((width - 480) / 720, 0), 1);
+  return {
+    shrink: 0.92 - widen * 0.18,
+    lift: LETTERING_LIFT + 18 + widen * 44,
+    detail: 0.9 - widen * 0.16,
+  };
+}
+
+function placeTitle(title, lettering, width, section) {
+  const { x, y, w } = lettering;
+  const fit = typeFit(width);
+  let lift = fit.lift;
+  if (section) {
+    const styles = getComputedStyle(section);
+    const scale = parseFloat(styles.getPropertyValue("--scale")) || 1;
+    const gap = parseFloat(styles.getPropertyValue("--gap")) || 0;
+    const paintingH = 1536;
+    const screenTop = (nextLift) => {
+      const titleTop = y - nextLift + gap * LETTERING_DROP;
+      return section.clientHeight - (paintingH + gap - titleTop) * scale;
+    };
+    while (screenTop(lift) < 32 && lift > LETTERING_LIFT) lift -= 4;
+  }
+  const nextW = w * fit.shrink;
+  title.style.left = `${x + (w - nextW) / 2}px`;
+  title.style.top = `calc(${y - lift}px + var(--gap) * ${LETTERING_DROP})`;
+  title.style.width = `${nextW}px`;
 }
 
 function createSky(canvas) {
@@ -244,6 +272,7 @@ export async function initHaldi(section) {
       sky.gl.viewport(0, 0, skyCanvas.width, skyCanvas.height);
     }
     petals?.resize(w, h, scale, Math.min(window.devicePixelRatio || 1, 2));
+    placeTitle(title, layout.lettering, w, section);
     placeDetails();
     if (!running) draw(last);
   };
@@ -254,9 +283,10 @@ export async function initHaldi(section) {
     if (!title || !details) return;
     const sectionBox = section.getBoundingClientRect();
     const titleBox = title.getBoundingClientRect();
-    const width = titleBox.width;
-    const left = titleBox.left - sectionBox.left;
-    details.style.top = `${Math.round(titleBox.bottom - sectionBox.top + 28)}px`;
+    const { detail } = typeFit(section.clientWidth);
+    const width = titleBox.width * detail;
+    const left = titleBox.left - sectionBox.left + (titleBox.width - width) / 2;
+    details.style.top = `${Math.round(titleBox.bottom - sectionBox.top + 16)}px`;
     details.style.left = `${Math.round(left)}px`;
     details.style.width = `${Math.round(width)}px`;
     details.style.right = "auto";
