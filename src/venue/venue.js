@@ -373,6 +373,12 @@ export async function initVenue(section) {
   };
 
   const setProgress = (progress) => {
+    // A flick can still carry the page after the pin lands. Pull it back so
+    // the words cannot scroll off the card.
+    if (scratchReady && !revealed && window.scrollY > pinY + 1) {
+      window.scrollTo(0, pinY);
+      progress = ritualProgress();
+    }
     const p = clamp01(progress);
     if (Math.abs(p - lastProgress) < 0.001) return;
     lastProgress = p;

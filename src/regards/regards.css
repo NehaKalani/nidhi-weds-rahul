@@ -209,6 +209,10 @@
     gap: 0.7rem;
   }
 
+  .regards__sheet--more .regards__family + .regards__family {
+    margin-top: 1.15rem;
+  }
+
   .regards__sheet--more .regards__lead {
     font-size: 1.5rem;
   }
@@ -271,6 +275,10 @@
     grid-template-columns: 1fr 1fr;
     align-items: start;
     column-gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  .regards__sheet--more .regards__stage {
+    column-gap: clamp(3.5rem, 8vw, 7rem);
   }
 
   .regards__names span {

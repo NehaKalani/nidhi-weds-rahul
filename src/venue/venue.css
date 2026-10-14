@@ -87,6 +87,12 @@
   z-index: 8;
 }
 
+/* The gold card is fixed while you scratch. The hint lives in the sticky
+   stage, so a flick that slips past the pin carries the words up alone. */
+.venue.is-scratchable:not(.is-revealed) .venue__hint {
+  position: fixed;
+}
+
 .venue.is-revealed.is-bridge {
   background: transparent;
 }
