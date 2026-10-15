@@ -98,7 +98,12 @@ body::before {
   grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: stretch;
   justify-items: center;
-  padding: var(--hero-pad);
+  /* Room inside the zigzag so the names and the cue stay clear of it. */
+  padding:
+    calc(var(--hero-pad) + 1.35rem)
+    calc(var(--hero-pad) + 1.05rem)
+    calc(var(--hero-pad) + 1.55rem)
+    calc(var(--hero-pad) + 1.05rem);
   overflow: hidden;
 }
 
@@ -242,6 +247,20 @@ body::before {
   background:
     radial-gradient(120% 90% at 50% 45%, var(--ivory) 55%, var(--ivory-deep) 100%),
     var(--ivory);
+}
+
+.hero__frame {
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+  left: max(0.55rem, env(safe-area-inset-left, 0px));
+  top: max(0.55rem, env(safe-area-inset-top, 0px));
+  width: calc(
+    100% - max(0.55rem, env(safe-area-inset-left, 0px)) - max(0.55rem, env(safe-area-inset-right, 0px))
+  );
+  height: calc(
+    100% - max(0.55rem, env(safe-area-inset-top, 0px)) - max(0.7rem, env(safe-area-inset-bottom, 0px))
+  );
 }
 
 .hero__cue {

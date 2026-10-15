@@ -96,7 +96,55 @@ async function setupRow(el) {
   }
 }
 
+function bindHeroFrame(hero) {
+  const frame = hero?.querySelector(".hero__frame");
+  if (!frame) return;
+
+  const ring = (w, h, inset, amp, period) => {
+    const sides = [
+      [inset, inset, w - inset, inset, 0, -1],
+      [w - inset, inset, w - inset, h - inset, 1, 0],
+      [w - inset, h - inset, inset, h - inset, 0, 1],
+      [inset, h - inset, inset, inset, -1, 0],
+    ];
+    const pts = [];
+    for (const [x0, y0, x1, y1, nx, ny] of sides) {
+      const dx = x1 - x0;
+      const dy = y1 - y0;
+      const len = Math.hypot(dx, dy);
+      const cycles = Math.max(2, Math.round(len / period));
+      const steps = cycles * 4;
+      for (let i = 0; i <= steps; i += 1) {
+        const phase = i % 4;
+        const mag = phase === 1 ? amp : phase === 3 ? -amp : 0;
+        const t = i / steps;
+        pts.push([x0 + dx * t + nx * mag, y0 + dy * t + ny * mag]);
+      }
+    }
+    return pts
+      .map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`)
+      .join(" ");
+  };
+
+  const draw = () => {
+    const w = frame.clientWidth;
+    const h = frame.clientHeight;
+    if (w < 80 || h < 80) return;
+    frame.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    frame.innerHTML = [8, 19]
+      .map(
+        (inset) =>
+          `<path d="${ring(w, h, inset, 3.5, 11)}" fill="none" stroke="#f3b6cc" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>`
+      )
+      .join("");
+  };
+
+  draw();
+  new ResizeObserver(draw).observe(frame);
+}
+
 async function init() {
+  bindHeroFrame(document.querySelector(".hero"));
   const rows = await Promise.all([...document.querySelectorAll(".name-row")].map(setupRow));
   const animated = rows.filter(Boolean);
 
