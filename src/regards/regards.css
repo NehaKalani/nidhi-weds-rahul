@@ -201,43 +201,43 @@
     row-gap: 0.32rem;
   }
 
-  .regards__sheet--more {
+  .regards__sheet:has(.regards__stage--packed) {
     padding: 0.75rem 0.85rem 0.55rem;
   }
 
-  .regards__sheet--more .regards__stage {
+  .regards__sheet:has(.regards__stage--packed) .regards__stage {
     gap: 0.7rem;
   }
 
-  .regards__sheet--more .regards__family + .regards__family {
+  .regards__sheet:has(.regards__stage--packed) .regards__family + .regards__family {
     margin-top: 1.15rem;
   }
 
-  .regards__sheet--more .regards__lead {
+  .regards__sheet:has(.regards__stage--packed) .regards__lead {
     font-size: 1.5rem;
   }
 
-  .regards__sheet--more .regards__house {
+  .regards__sheet:has(.regards__stage--packed) .regards__house {
     margin: 0.06rem 0 0.32rem;
     font-size: 0.76rem;
     letter-spacing: 0.1em;
   }
 
-  .regards__sheet--more .regards__names {
+  .regards__sheet:has(.regards__stage--packed) .regards__names {
     column-gap: 0.55rem;
     row-gap: 0.18rem;
   }
 
-  .regards__sheet--more .regards__names span,
-  .regards__sheet--more .regards__names em {
+  .regards__sheet:has(.regards__stage--packed) .regards__names span,
+  .regards__sheet:has(.regards__stage--packed) .regards__names em {
     line-height: 1.15;
   }
 
-  .regards__sheet--more .regards__names span {
+  .regards__sheet:has(.regards__stage--packed) .regards__names span {
     font-size: 1.02rem;
   }
 
-  .regards__sheet--more .regards__names em {
+  .regards__sheet:has(.regards__stage--packed) .regards__names em {
     font-size: 0.74rem;
   }
 }

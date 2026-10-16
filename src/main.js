@@ -20,6 +20,9 @@ import { initMusic } from "./music/music.js";
 import { lockViewport } from "./lib/viewport.js";
 import { onScrollFrame } from "./lib/scroll.js";
 import { preloadWhenNear } from "./lib/preload.js";
+import { applyInvite } from "./lib/invite.js";
+
+applyInvite();
 
 const TIMELINE = {
   nidhi: { mossStart: 200, mossDuration: 1700, vineStart: 1300, vineDuration: 3800 },
