@@ -1,0 +1,46 @@
+const params = new URLSearchParams(window.location.search);
+
+export const language = params.get("l") === "hi" ? "hi" : "en";
+export const recipientFamily = params.get("f") === "r" ? "r" : "";
+
+const MAURYA_BLESSINGS = [
+  "Smt. Shanti Devi",
+  "Sri Mata Badal Maurya",
+  "Smt. Santosh Kumari Maurya",
+];
+
+function applyMauryaHero() {
+  const names = document.querySelector(".hero__intro-names");
+  const family = document.querySelector(".hero__intro-family");
+  if (!names || !family) return;
+
+  names.replaceChildren(
+    ...MAURYA_BLESSINGS.map((line) => {
+      const span = document.createElement("span");
+      span.textContent = line;
+      return span;
+    }),
+  );
+  family.textContent = "and the entire Maurya family";
+}
+
+function showMauryaRegardsFirst() {
+  const first = document.querySelector(".regards__sheet--first .regards__stage");
+  const more = document.querySelector(".regards__sheet--more .regards__stage");
+  if (!first?.parentElement || !more?.parentElement) return;
+
+  const firstSheet = first.parentElement;
+  const moreSheet = more.parentElement;
+  firstSheet.appendChild(more);
+  moreSheet.appendChild(first);
+}
+
+export function applyInvite() {
+  // Hindi copy and fonts are not applied yet. l=hi only marks the page.
+  document.documentElement.dataset.lang = language;
+  if (recipientFamily) document.documentElement.dataset.family = recipientFamily;
+  if (recipientFamily !== "r") return;
+
+  applyMauryaHero();
+  showMauryaRegardsFirst();
+}
