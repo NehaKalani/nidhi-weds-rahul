@@ -1,3 +1,5 @@
+import { t } from "../lib/hindi.js";
+
 const VOLUME = 0.8;
 
 export function initMusic(ganesha, button, ganeshaAudio, heroAudio) {
@@ -34,7 +36,7 @@ export function initMusic(ganesha, button, ganeshaAudio, heroAudio) {
     button.classList.toggle("is-muted", userMuted);
     button.classList.toggle("is-waiting", opened && active.paused);
     button.setAttribute("aria-pressed", userMuted ? "true" : "false");
-    button.setAttribute("aria-label", userMuted ? "Unmute music" : "Mute music");
+    button.setAttribute("aria-label", t(userMuted ? "Unmute music" : "Mute music"));
   };
 
   const invite = () => {

@@ -1,6 +1,8 @@
+import { applyHindi, isHindi } from "./hindi.js";
+
 const params = new URLSearchParams(window.location.search);
 
-export const language = params.get("l") === "hi" ? "hi" : "en";
+export const language = isHindi ? "hi" : "en";
 export const recipientFamily = params.get("f") === "r" ? "r" : "";
 
 const MAURYA_BLESSINGS = [
@@ -36,11 +38,12 @@ function showMauryaRegardsFirst() {
 }
 
 export function applyInvite() {
-  // Hindi copy and fonts are not applied yet. l=hi only marks the page.
   document.documentElement.dataset.lang = language;
+  if (language === "hi") document.documentElement.lang = "hi";
   if (recipientFamily) document.documentElement.dataset.family = recipientFamily;
-  if (recipientFamily !== "r") return;
-
-  applyMauryaHero();
-  showMauryaRegardsFirst();
+  if (recipientFamily === "r") {
+    applyMauryaHero();
+    showMauryaRegardsFirst();
+  }
+  if (language === "hi") applyHindi(document.body);
 }

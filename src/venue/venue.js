@@ -1,4 +1,5 @@
 import { onScrollFrame } from "../lib/scroll.js";
+import { t } from "../lib/hindi.js";
 
 const BASE = "/venue";
 const CLEAR_AT = 0.14;
@@ -194,10 +195,10 @@ export async function initVenue(section) {
   function tickCountdown() {
     const parts = countdownParts(new Date(), WEDDING);
     const labels = {
-      months: parts.months === 1 ? "month" : "months",
-      days: parts.days === 1 ? "day" : "days",
-      hours: parts.hours === 1 ? "hr" : "hrs",
-      secs: "sec",
+      months: t(parts.months === 1 ? "month" : "months"),
+      days: t(parts.days === 1 ? "day" : "days"),
+      hours: t(parts.hours === 1 ? "hr" : "hrs"),
+      secs: t("sec"),
     };
     for (const [unit, value] of Object.entries(parts)) {
       const el = section.querySelector(`[data-unit="${unit}"]`);

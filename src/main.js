@@ -7,6 +7,7 @@ import "./maayra/maayra.css";
 import "./sunset/sunset.css";
 import "./regards/regards.css";
 import "./music/music.css";
+import "./lib/hindi.css";
 import { createVineRenderer } from "./hero/vineRenderer.js";
 import { createFlowers } from "./hero/flowers.js";
 import { initGanesha } from "./ganesha/ganesha.js";
