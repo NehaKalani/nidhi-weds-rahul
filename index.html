@@ -29,6 +29,15 @@
     <link rel="preload" as="image" href="/ganesha/ganesha.webp" />
     <script>
       document.documentElement.style.setProperty("--app-h", Math.round(window.innerHeight) + "px");
+      if (new URLSearchParams(location.search).get("l") === "hi") {
+        document.documentElement.lang = "hi";
+        document.documentElement.dataset.lang = "hi";
+        const hindiFont = document.createElement("link");
+        hindiFont.rel = "stylesheet";
+        hindiFont.href =
+          "https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap";
+        document.head.appendChild(hindiFont);
+      }
     </script>
     <link rel="icon" href="data:," />
   </head>
@@ -189,6 +198,12 @@
             width="900"
             height="74"
           />
+          <div class="haldi__copy-hi">
+            <p>30 जनवरी, 2027</p>
+            <p>लॉन-ए, दोपहर 12:30 बजे से</p>
+            <p>थीम: <em>रासलीला</em></p>
+            <p>रंग: नीला, पीला, गुलाबी, हरा</p>
+          </div>
         </div>
         <canvas class="haldi__petals" aria-hidden="true"></canvas>
       </section>
@@ -358,7 +373,7 @@
                     <li><span>Late Sri Shyam Sundar Maurya, <span class="regards__woman">Late Smt. Phoolmati</span></span><em>(nana-nani)</em></li>
                     <li><span>Dr. Hari Shankar Maurya, <span class="regards__woman">Smt. Kamlesh Maurya</span></span><em>(bade mama-badi mami)</em></li>
                     <li><span>Sri Ravi Prakash Maurya, <span class="regards__woman">Smt. Jamuna Devi</span></span><em>(chote mama-choti mami)</em></li>
-                    <li><span>Aditya, Sudhanshu, Khushu, Neha, Khushbu, Komal, Shikha</span><em>(bhai-behen)</em></li>
+                    <li><span>Aditya, Sudhanshu, Khushbu, Neha, Komal, Shikha</span><em>(bhai-behen)</em></li>
                   </ul>
                 </div>
               </div>
