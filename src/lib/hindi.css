@@ -15,7 +15,7 @@ html[data-lang="hi"] :is(
   .hero__intro-invite,
   .hero__cue,
   .venue__dates,
-  .venue__timer,
+  .venue__timer small,
   .venue__scroll-cue,
   .event-card,
   .maayra__date,
@@ -126,6 +126,19 @@ html[data-lang="hi"] .regards__lead {
   letter-spacing: 0;
 }
 
+html[data-lang="hi"] .venue__timer span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.42rem 0.32rem 0.34rem;
+}
+
+html[data-lang="hi"] .venue__timer b {
+  font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+  line-height: 1;
+}
+
 html[data-lang="hi"] .venue__timer small,
 html[data-lang="hi"] .maayra__hosts-label,
 html[data-lang="hi"] .sangeet__details em,
@@ -133,6 +146,12 @@ html[data-lang="hi"] .regards__house,
 html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__house {
   letter-spacing: 0;
   text-transform: none;
+}
+
+html[data-lang="hi"] .venue__timer small {
+  margin-top: 0.1rem;
+  font-size: 0.56rem;
+  line-height: 1;
 }
 
 html[data-lang="hi"] .regards__names span,
@@ -182,8 +201,42 @@ html[data-lang="hi"] .venue__hint i:last-child {
 }
 
 @media (max-width: 859px) {
+  html[data-lang="hi"] .regards__sheet--first .regards__lead,
+  html[data-lang="hi"] .regards__sheet--more .regards__lead {
+    font-size: 1.32rem;
+    line-height: 1.22;
+  }
+
+  html[data-lang="hi"] .regards__sheet--first .regards__house,
+  html[data-lang="hi"] .regards__sheet--more .regards__house {
+    font-size: 0.74rem;
+  }
+
+  html[data-lang="hi"] .regards__sheet--first .regards__names span,
+  html[data-lang="hi"] .regards__sheet--more .regards__names span {
+    font-size: 1.02rem;
+    line-height: 1.18;
+  }
+
+  html[data-lang="hi"] .regards__sheet--first .regards__names em,
+  html[data-lang="hi"] .regards__sheet--more .regards__names em {
+    font-size: 0.74rem;
+    line-height: 1.18;
+  }
+
   html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__lead {
-    font-size: 1.35rem;
-    line-height: 1.25;
+    font-size: 1.18rem;
+  }
+
+  html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__house {
+    font-size: 0.66rem;
+  }
+
+  html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__names span {
+    font-size: 0.88rem;
+  }
+
+  html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__names em {
+    font-size: 0.64rem;
   }
 }
