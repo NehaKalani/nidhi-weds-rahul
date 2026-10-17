@@ -108,8 +108,11 @@ const COPY = {
   "Sri Ram Milan Maurya,": "श्री राम मिलन मौर्य,",
   "Smt. Bimla Devi": "सौ. बिमला देवी",
   "(choti bua-chote fufa)": "(छोटी बुआ-छोटे फूफा)",
-  "Neelam, Ashutosh, Vandana, Laxmi, Jyotsana, Roli, Anupam":
-    "नीलम, आशुतोष, वंदना, लक्ष्मी, ज्योत्सना, रोली, अनुपम",
+  "Sri Ashutosh Maurya,": "श्री आशुतोष मौर्य,",
+  "Smt. Rashmi Maurya": "सौ. रश्मि मौर्य",
+  "(bhaiya-bhabhi)": "(भैया-भाभी)",
+  "Neelam, Vandana, Laxmi, Jyotsana, Roli, Anupam":
+    "नीलम, वंदना, लक्ष्मी, ज्योत्सना, रोली, अनुपम",
   "Late Sri Shyam Sundar Maurya,": "स्व. श्री श्याम सुंदर मौर्य,",
   "Late Smt. Phoolmati": "स्व. सौ. फूलमती",
   "Dr. Hari Shankar Maurya,": "डॉ. हरि शंकर मौर्य,",
