@@ -3,26 +3,25 @@
 }
 
 html[data-lang="hi"] {
-  --hi: "Tiro Devanagari Hindi", "Noto Serif Devanagari", serif;
-  --hi-script: Amita, "Tiro Devanagari Hindi", serif;
+  --hi: "Noto Serif Devanagari", "Tiro Devanagari Hindi", serif;
+  --hi-script: Amita, "Noto Serif Devanagari", serif;
 }
 
 html[data-lang="hi"] :is(
   .ganesha__invite-label,
-  .ganesha__invite-lead,
   .hero__intro-kicker,
   .hero__intro-names span,
   .hero__intro-family,
   .hero__intro-invite,
   .hero__cue,
   .venue__dates,
-  .venue__until,
   .venue__timer,
   .venue__scroll-cue,
   .event-card,
   .maayra__date,
   .maayra__hosts,
-  .sunset__rite p,
+  .sunset__rite--day p:not(.sunset__rite-name),
+  .sunset__rite--night p:not(.sunset__rite-name),
   .regards__house,
   .regards__names span,
   .regards__names em,
@@ -30,7 +29,6 @@ html[data-lang="hi"] :is(
   .haldi__copy-hi
 ) {
   font-family: var(--hi);
-  font-style: normal;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -38,13 +36,77 @@ html[data-lang="hi"] :is(
 html[data-lang="hi"] :is(
   .maayra__title,
   .regards__waiting,
-  .venue__hint,
-  .sunset__rite--day .sunset__rite-name
+  .venue__hint
 ) {
   font-family: var(--hi-script);
   font-style: normal;
   letter-spacing: 0;
   text-transform: none;
+}
+
+html[data-lang="hi"] .ganesha__invite-lead,
+html[data-lang="hi"] .venue__until {
+  display: none;
+}
+
+html[data-lang="hi"] .hero__intro-kicker {
+  font-weight: 700;
+  font-style: normal;
+  font-size: 0.82em;
+  letter-spacing: 0.04em;
+}
+
+html[data-lang="hi"] .hero__intro-names span {
+  font-weight: 600;
+  font-style: normal;
+  font-size: 1.22em;
+  line-height: 1.28;
+}
+
+html[data-lang="hi"] .hero__intro-family {
+  font-weight: 500;
+  font-style: italic;
+  font-size: 1.12em;
+  line-height: 1.28;
+}
+
+html[data-lang="hi"] .hero__intro-invite {
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.32em;
+  line-height: 1.25;
+}
+
+html[data-lang="hi"] .hero__cue {
+  -webkit-text-stroke: 0;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+html[data-lang="hi"] .hero__cue-scroll {
+  align-items: center;
+  gap: 0.4rem;
+}
+
+html[data-lang="hi"] .when-scroll {
+  line-height: 1;
+}
+
+html[data-lang="hi"] .hero__cue-arrow {
+  width: 0.48rem;
+  height: 0.48rem;
+  margin-top: -0.42em;
+  border-right-width: 1.75px;
+  border-bottom-width: 1.75px;
+}
+
+html[data-lang="hi"] .sunset__rite--day .sunset__rite-name {
+  font-family: Amita, "Noto Serif Devanagari", serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1.2;
+  letter-spacing: 0;
 }
 
 html[data-lang="hi"] .maayra__title {
@@ -59,38 +121,29 @@ html[data-lang="hi"] .regards__waiting {
 
 html[data-lang="hi"] .regards__lead {
   font-family: var(--hi);
-  font-size: clamp(1.2rem, 4.6vw, 1.8rem);
-  line-height: 1.3;
+  font-size: clamp(1.45rem, 4.2vw, 2.2rem);
+  line-height: 1.25;
   letter-spacing: 0;
 }
 
 html[data-lang="hi"] .venue__timer small,
 html[data-lang="hi"] .maayra__hosts-label,
 html[data-lang="hi"] .sangeet__details em,
+html[data-lang="hi"] .regards__house,
 html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__house {
   letter-spacing: 0;
   text-transform: none;
 }
 
-html[data-lang="hi"] .hero__intro-names span,
 html[data-lang="hi"] .regards__names span,
 html[data-lang="hi"] .regards__names em {
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 html[data-lang="hi"] .regards__woman,
 html[data-lang="hi"] .regards__names em,
 html[data-lang="hi"] .regards__map {
   white-space: normal;
-}
-
-html[data-lang="hi"] .sunset__rite--day .sunset__rite-name {
-  font-size: 42px;
-  line-height: 1.25;
-}
-
-html[data-lang="hi"] .sunset__rite--night .sunset__rite-name {
-  font-family: Amita, "Tiro Devanagari Hindi", serif;
 }
 
 html[data-lang="hi"] .sangeet__details em {
@@ -128,7 +181,9 @@ html[data-lang="hi"] .venue__hint i:last-child {
   display: none;
 }
 
-html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__names span,
-html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__names em {
-  line-height: 1.32;
+@media (max-width: 859px) {
+  html[data-lang="hi"] .regards__sheet:has(.regards__stage--packed) .regards__lead {
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
 }
