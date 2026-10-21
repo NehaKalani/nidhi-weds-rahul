@@ -26,6 +26,31 @@ function applyMauryaHero() {
   family.textContent = "and the entire Maurya family";
 }
 
+function applyRahulWedsNidhi() {
+  const title = document.querySelector("#hero-title");
+  if (!title) return;
+
+  const nidhi = title.querySelector('[data-row="nidhi"]');
+  const rahul = title.querySelector('[data-row="rahul"]');
+  const weds = title.querySelector(".weds");
+  if (!nidhi || !rahul || !weds) return;
+
+  title.replaceChildren(rahul, weds, nidhi);
+  title.setAttribute("aria-label", "Rahul weds Nidhi");
+  document.title = "Rahul weds Nidhi";
+
+  for (const el of document.querySelectorAll(
+    'meta[property="og:title"], meta[name="twitter:title"]',
+  )) {
+    el.setAttribute("content", "Rahul weds Nidhi");
+  }
+
+  const ogAlt = document.querySelector('meta[property="og:image:alt"]');
+  if (ogAlt) {
+    ogAlt.setAttribute("content", "Rahul weds Nidhi, lettered in moss and flowers");
+  }
+}
+
 function showMauryaRegardsFirst() {
   const first = document.querySelector(".regards__sheet--first .regards__stage");
   const more = document.querySelector(".regards__sheet--more .regards__stage");
@@ -43,6 +68,7 @@ export function applyInvite() {
   if (recipientFamily) document.documentElement.dataset.family = recipientFamily;
   if (recipientFamily === "r") {
     applyMauryaHero();
+    applyRahulWedsNidhi();
     showMauryaRegardsFirst();
   }
   if (language === "hi") applyHindi(document.body);

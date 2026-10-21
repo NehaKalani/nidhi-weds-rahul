@@ -100,6 +100,8 @@ const COPY = {
   "(bade papa-mummy)": "(बड़े पापा-मम्मी)",
   "Sri Sant Lal ji Maurya,": "श्री संत लाल जी मौर्य,",
   "Smt. Ashok Kumari Maurya": "सौ. अशोक कुमारी मौर्य",
+  "and Jyotsana Maurya,": "एवं कु. ज्योत्सना मौर्य,",
+  "(behen)": "(बहन)",
   "Sri Pavan Kumar Maurya,": "श्री पवन कुमार मौर्य,",
   "Smt. Pushpa Maurya": "सौ. पुष्पा मौर्य",
   "Sri Gaya Prasad Maurya,": "श्री गया प्रसाद मौर्य,",
@@ -111,8 +113,7 @@ const COPY = {
   "Sri Ashutosh Maurya,": "श्री आशुतोष मौर्य,",
   "Smt. Rashmi Maurya": "सौ. रश्मि मौर्य",
   "(bhaiya-bhabhi)": "(भैया-भाभी)",
-  "Neelam, Vandana, Laxmi, Jyotsana, Roli, Anupam":
-    "नीलम, वंदना, लक्ष्मी, ज्योत्सना, रोली, अनुपम",
+  "Neelam, Vandana, Laxmi, Roli, Anupam": "नीलम, वंदना, लक्ष्मी, रोली, अनुपम",
   "Late Sri Shyam Sundar Maurya,": "स्व. श्री श्याम सुंदर मौर्य,",
   "Late Smt. Phoolmati": "स्व. सौ. फूलमती",
   "Dr. Hari Shankar Maurya,": "डॉ. हरि शंकर मौर्य,",

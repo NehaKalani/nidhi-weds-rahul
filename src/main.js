@@ -208,12 +208,12 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
   const stage = hero.querySelector(".hero__stage");
   const veil = hero.querySelector(".hero__veil");
   const intro = hero.querySelector(".hero__intro");
-  const nidhi = hero.querySelector('[data-row="nidhi"]');
-  const rahul = hero.querySelector('[data-row="rahul"]');
+  const [topName, bottomName] = hero.querySelectorAll(".name-row");
   const weds = hero.querySelector(".weds");
+  if (!topName || !bottomName || !weds) return;
   const scaleGain = 0.52;
-  let nidhiExit = 0;
-  let rahulExit = 0;
+  let topExit = 0;
+  let bottomExit = 0;
   let locked = false;
   let settled = false;
   let frameId = 0;
@@ -275,14 +275,14 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     const scale = 1 + scaleGain;
     const margin = 28;
     const stageRect = stage.getBoundingClientRect();
-    const n = restingRect(nidhi);
-    const r = restingRect(rahul);
-    if (n.height < 8 || r.height < 8) return;
-    const nCenter = n.top - stageRect.top + n.height / 2;
-    const rCenter = r.top - stageRect.top + r.height / 2;
+    const top = restingRect(topName);
+    const bottom = restingRect(bottomName);
+    if (top.height < 8 || bottom.height < 8) return;
+    const topCenter = top.top - stageRect.top + top.height / 2;
+    const bottomCenter = bottom.top - stageRect.top + bottom.height / 2;
     const view = stage.clientHeight || window.innerHeight;
-    nidhiExit = nCenter + (n.height * scale) / 2 + margin;
-    rahulExit = view + margin - (rCenter - (r.height * scale) / 2);
+    topExit = topCenter + (top.height * scale) / 2 + margin;
+    bottomExit = view + margin - (bottomCenter - (bottom.height * scale) / 2);
   };
 
   const apply = (progress) => {
@@ -294,10 +294,10 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
       venue.style.setProperty("--scene", revealed ? "0" : "1");
       weds.style.opacity = "";
       weds.style.filter = "";
-      nidhi.style.transform = "";
-      rahul.style.transform = "";
-      nidhi.style.opacity = "";
-      rahul.style.opacity = "";
+      topName.style.transform = "";
+      bottomName.style.transform = "";
+      topName.style.opacity = "";
+      bottomName.style.opacity = "";
       hero.classList.remove("is-parting");
       hero.style.removeProperty("--intro");
       return;
@@ -309,8 +309,8 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
     const wedsOpacity = 1 - easeInOut(clamp01((progress - 0.08) / 0.18));
     const introOpacity = intro ? 1 - easeInOut(clamp01(progress / 0.14)) : 1;
     const scale = 1 + move * scaleGain;
-    const nidhiApart = move * (nidhiExit || window.innerHeight * 0.72);
-    const rahulApart = move * (rahulExit || window.innerHeight * 0.72);
+    const topApart = move * (topExit || window.innerHeight * 0.72);
+    const bottomApart = move * (bottomExit || window.innerHeight * 0.72);
 
     veil.style.opacity = String(1 - (revealed ? scene : foil));
     venue.style.setProperty("--foil", foil.toFixed(3));
@@ -320,14 +320,14 @@ function bindHeroBridge(hero, venue, venueReady, ganesha, music) {
       hero.classList.add("is-parting");
       hero.style.setProperty("--intro", introOpacity.toFixed(3));
     }
-    nidhi.style.opacity = "";
-    rahul.style.opacity = "";
-    nidhi.style.transform = `translate3d(0, ${-nidhiApart}px, 0) scale(${scale})`;
-    rahul.style.transform = `translate3d(0, ${rahulApart}px, 0) scale(${scale})`;
+    topName.style.opacity = "";
+    bottomName.style.opacity = "";
+    topName.style.transform = `translate3d(0, ${-topApart}px, 0) scale(${scale})`;
+    bottomName.style.transform = `translate3d(0, ${bottomApart}px, 0) scale(${scale})`;
   };
 
   const update = () => {
-    if (!nidhiExit) measureExits();
+    if (!topExit) measureExits();
 
     const ganeshaGone = !ganesha || window.scrollY + 1 >= ganesha.offsetTop + ganesha.offsetHeight;
     const venueTop = venue.offsetTop - window.scrollY;
