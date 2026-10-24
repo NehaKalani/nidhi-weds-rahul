@@ -194,14 +194,22 @@ export async function initVenue(section) {
 
   function tickCountdown() {
     const parts = countdownParts(new Date(), WEDDING);
+    const order = ["months", "days", "hours", "secs"];
+    // Hide leading zeros only; once a higher unit is non-zero, keep finer units visible.
+    let firstShown = order.findIndex((unit) => parts[unit] > 0);
+    if (firstShown === -1) firstShown = order.length;
     const labels = {
       months: t(parts.months === 1 ? "month" : "months"),
       days: t(parts.days === 1 ? "day" : "days"),
       hours: t(parts.hours === 1 ? "hr" : "hrs"),
       secs: t("sec"),
     };
-    for (const [unit, value] of Object.entries(parts)) {
+    for (let i = 0; i < order.length; i++) {
+      const unit = order[i];
+      const value = parts[unit];
       const el = section.querySelector(`[data-unit="${unit}"]`);
+      const wrap = el?.closest("span");
+      if (wrap) wrap.hidden = i < firstShown;
       if (el) el.textContent = unit === "months" || unit === "days" ? String(value) : String(value).padStart(2, "0");
       const label = section.querySelector(`[data-label="${unit}"]`);
       if (label) label.textContent = labels[unit];
