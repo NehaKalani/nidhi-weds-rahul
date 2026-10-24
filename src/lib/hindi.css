@@ -126,7 +126,7 @@ html[data-lang="hi"] .regards__lead {
   letter-spacing: 0;
 }
 
-html[data-lang="hi"] .venue__timer span {
+html[data-lang="hi"] .venue__timer span:not([hidden]) {
   display: flex;
   flex-direction: column;
   align-items: center;
